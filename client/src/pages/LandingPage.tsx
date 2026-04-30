@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Vote, CheckCircle2, Globe, Shield, MessageSquare, HelpCircle, ChevronDown } from "lucide-react";
+import { ArrowRight, Vote, CheckCircle2, Globe, Shield, MessageSquare, HelpCircle, ChevronDown, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { ThemeToggle } from "../components/ThemeToggle";
@@ -36,7 +36,7 @@ export const LandingPage = () => {
     },
     {
       question: "Which countries are supported?",
-      answer: "Currently, we support India, USA, France, UK, and Germany. We are constantly expanding our knowledge base to include more democratic nations."
+      answer: "Currently, we support India, USA, and UK. We are constantly expanding our knowledge base to include more democratic nations."
     },
     {
       question: "Is the information accurate?",
@@ -62,6 +62,8 @@ export const LandingPage = () => {
           <div className="flex items-center gap-8">
             <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
               <a href="#features" className="hover:text-foreground transition-colors">Features</a>
+              <Link to="/quiz" className="hover:text-foreground transition-colors">Quiz</Link>
+              <Link to="/timeline" className="hover:text-foreground transition-colors">Timeline</Link>
               <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
             </div>
             <ThemeToggle />
@@ -186,7 +188,7 @@ export const LandingPage = () => {
             <p className="text-muted-foreground max-w-xl mx-auto">We combine cutting-edge technology with constitutional expertise.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
                 icon: <Globe className="text-blue-500" />,
@@ -194,22 +196,27 @@ export const LandingPage = () => {
                 desc: "Deep knowledge about diverse election systems from Westminster models to Presidential systems."
               },
               {
+                icon: <HelpCircle className="text-primary" />,
+                title: "Interactive Quiz",
+                desc: "Test your knowledge with our specially curated election awareness quizzes."
+              },
+              {
+                icon: <Clock className="text-purple-500" />,
+                title: "Election Timeline",
+                desc: "Explore the history and milestones of democratic processes through time."
+              },
+              {
                 icon: <Shield className="text-emerald-500" />,
                 title: "Reliable Data",
                 desc: "Information sourced from official documents to ensure accuracy and neutrality."
-              },
-              {
-                icon: <HelpCircle className="text-primary" />,
-                title: "Instant Answers",
-                desc: "No more digging through legal jargon. Get clear, conversational answers in seconds."
               }
             ].map((f, i) => (
-              <div key={i} className="p-8 bg-card border border-border/50 rounded-3xl hover:border-primary/30 transition-all group">
+              <div key={i} className="p-8 bg-card border border-border/50 rounded-3xl hover:border-primary/30 transition-all group flex flex-col h-full">
                 <div className="w-12 h-12 bg-secondary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   {f.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-4">{f.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{f.desc}</p>
+                <p className="text-muted-foreground leading-relaxed flex-1">{f.desc}</p>
               </div>
             ))}
           </div>

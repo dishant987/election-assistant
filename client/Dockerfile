@@ -18,12 +18,13 @@ RUN npm run build
 # Serve stage
 FROM nginx:alpine
 
-# Copy custom nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy custom nginx template
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
 # Copy build artifacts to nginx
 COPY --from=build /app/dist /usr/share/nginx/html
 
-EXPOSE 80
+# Cloud Run uses the PORT environment variable
+ENV PORT=8080
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["sh", "-c", "envsubst '${PORT}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]

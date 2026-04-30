@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useChatStore } from "../store/chatStore";
-import { Trash2, MessageSquare, PlusCircle, Settings, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trash2, MessageSquare, PlusCircle, Settings, ChevronLeft, ChevronRight, HelpCircle, Clock } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { ConfirmModal } from "./ConfirmModal";
 import { SettingsModal } from "./SettingsModal";
 
@@ -42,6 +43,20 @@ export const Sidebar = () => {
           </div>
 
           <div className="pt-6 border-t border-border space-y-2">
+            <Link
+              to="/quiz"
+              className="w-full flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-secondary/50 rounded-xl text-sm font-bold transition-all"
+            >
+              <HelpCircle size={18} />
+              <span>Election Quiz</span>
+            </Link>
+            <Link
+              to="/timeline"
+              className="w-full flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-secondary/50 rounded-xl text-sm font-bold transition-all"
+            >
+              <Clock size={18} />
+              <span>Timeline</span>
+            </Link>
             <button
               onClick={() => setIsSettingsOpen(true)}
               className="w-full flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-secondary/50 rounded-xl text-sm font-bold transition-all"
@@ -58,7 +73,6 @@ export const Sidebar = () => {
                 <span>Clear History</span>
               </button>
             )}
-
           </div>
         </div>
       </motion.aside>

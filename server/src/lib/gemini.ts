@@ -1,16 +1,25 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import dotenv from "dotenv";
+import { getSecret } from "./secrets";
+import { logger } from "./logger";
 
-dotenv.config();
+let genAI: GoogleGenerativeAI | null = null;
 
-if (!process.env.GEMINI_API_KEY) {
-  throw new Error("GEMINI_API_KEY is not defined in environment variables");
-}
+const initializeGenAI = async () => {
+  if (genAI) return genAI;
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  const apiKey = await getSecret("GEMINI_API_KEY");
+  if (!apiKey) {
+    logger.error("GEMINI_API_KEY is not defined in environment or Secret Manager");
+    throw new Error("GEMINI_API_KEY is not defined");
+  }
 
-export const getGeminiModel = (systemInstruction: string) => {
-  return genAI.getGenerativeModel({
+  genAI = new GoogleGenerativeAI(apiKey);
+  return genAI;
+};
+
+export const getGeminiModel = async (systemInstruction: string) => {
+  const ai = await initializeGenAI();
+  return ai.getGenerativeModel({
     model: "gemini-2.5-flash",
     systemInstruction,
   });

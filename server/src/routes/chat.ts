@@ -32,7 +32,7 @@ router.post("/", chatRateLimit, validate(chatSchema), async (req, res) => {
   const systemPrompt = COUNTRY_PROMPTS[country] + languageInstruction;
 
   try {
-    const model = getGeminiModel(systemPrompt);
+    const model = await getGeminiModel(systemPrompt);
     const lastMessage = messages[messages.length - 1].parts[0].text;
     
     // Gemini history must start with a 'user' message. 

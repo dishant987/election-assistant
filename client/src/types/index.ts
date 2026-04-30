@@ -1,4 +1,4 @@
-export type Country = "india" | "usa" | "france" | "uk" | "germany";
+export type Country = "india" | "usa" | "uk";
 
 export interface Message {
   role: "user" | "model";
@@ -30,17 +30,6 @@ export const COUNTRIES: { id: Country; label: string; flag: string; suggestions:
     ]
   },
   { 
-    id: "france", 
-    label: "France", 
-    flag: "🇫🇷",
-    suggestions: [
-      "How is the President of France elected?",
-      "What is the two-round voting system?",
-      "Explain the role of the National Assembly.",
-      "What are the rules for election campaigning?"
-    ]
-  },
-  { 
     id: "uk", 
     label: "UK", 
     flag: "🇬🇧",
@@ -49,17 +38,6 @@ export const COUNTRIES: { id: Country; label: string; flag: string; suggestions:
       "What happens during a hung parliament?",
       "Explain the role of the House of Commons.",
       "How is the Prime Minister chosen?"
-    ]
-  },
-  { 
-    id: "germany", 
-    label: "Germany", 
-    flag: "🇩🇪",
-    suggestions: [
-      "What is the Mixed-Member Proportional system?",
-      "How does the five-percent hurdle work?",
-      "Explain the role of the Bundestag.",
-      "How is the Federal Chancellor elected?"
     ]
   },
 ];

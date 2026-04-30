@@ -13,8 +13,9 @@ export const ChatInput = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  const countryLabel = COUNTRIES.find((c) => c.id === selectedCountry)?.label;
-  const countryFlag = COUNTRIES.find((c) => c.id === selectedCountry)?.flag;
+  const country = COUNTRIES.find((c) => c.id === selectedCountry);
+  const countryLabel = country?.label || "Select Country";
+  const countryFlag = country?.flag || "🌍";
 
   const handleSend = () => {
     if (text.trim() && selectedCountry && !isLoading) {

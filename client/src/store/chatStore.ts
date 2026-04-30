@@ -19,8 +19,18 @@ interface ChatStore {
 export const useChatStore = create<ChatStore>()(
   persist(
     (set, get) => ({
-      selectedCountry: null,
-      messages: [],
+      selectedCountry: "india",
+      messages: [
+        {
+          role: "model",
+          parts: [
+            {
+              text: "Welcome! You've selected 🇮🇳 India. I'm here to help you understand India's election process. What would you like to know?",
+            },
+          ],
+          language: "English",
+        },
+      ],
       isLoading: false,
       language: "English",
 

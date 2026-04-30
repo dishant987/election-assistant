@@ -3,6 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import chatRoutes from "./routes/chat";
+import { logger } from "./lib/logger";
 
 dotenv.config();
 
@@ -10,13 +11,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : "http://localhost:5173",
 }));
+
+// Use morgan for console logging, but we also have our winston logger
 app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/api/chat", chatRoutes);
 
+
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  logger.info(`Server is running on http://localhost:${PORT}`);
 });
