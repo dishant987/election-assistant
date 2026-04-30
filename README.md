@@ -94,10 +94,3 @@ Election/
 │   │   └── routes/        # API route definitions
 └── README.md              # Main documentation
 ```
-
-## 📜 License
-
-This project is licensed under the ISC License.
-
----
-Built with ❤️ for democratic education.
