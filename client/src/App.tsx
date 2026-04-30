@@ -5,7 +5,7 @@ import { ThemeProvider } from "next-themes";
 
 function App() {
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark">
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
