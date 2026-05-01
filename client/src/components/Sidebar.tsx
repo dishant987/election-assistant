@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useChatStore } from "../store/chatStore";
-import { Trash2, MessageSquare, PlusCircle, Settings, ChevronLeft, ChevronRight, HelpCircle, Clock } from "lucide-react";
+import { Trash2, MessageSquare, PlusCircle, Settings, ChevronLeft, ChevronRight, HelpCircle, Clock, Info, Newspaper, Monitor, ShieldAlert } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ConfirmModal } from "./ConfirmModal";
@@ -56,6 +56,41 @@ export const Sidebar = () => {
             >
               <Clock size={18} />
               <span>Timeline</span>
+            </Link>
+            <Link
+              to="/process"
+              className="w-full flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-secondary/50 rounded-xl text-sm font-bold transition-all"
+            >
+              <Info size={18} />
+              <span>Election Process</span>
+            </Link>
+            <Link
+              to="/faq"
+              className="w-full flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-secondary/50 rounded-xl text-sm font-bold transition-all"
+            >
+              <HelpCircle size={18} />
+              <span>Common FAQs</span>
+            </Link>
+            <Link
+              to="/news"
+              className="w-full flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-secondary/50 rounded-xl text-sm font-bold transition-all"
+            >
+              <Newspaper size={18} />
+              <span>Live News</span>
+            </Link>
+            <Link
+              to="/simulator"
+              className="w-full flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-secondary/50 rounded-xl text-sm font-bold transition-all"
+            >
+              <Monitor size={18} />
+              <span>Simulator</span>
+            </Link>
+            <Link
+              to="/myth-buster"
+              className="w-full flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-secondary/50 rounded-xl text-sm font-bold transition-all"
+            >
+              <ShieldAlert size={18} />
+              <span>Myth Buster</span>
             </Link>
             <button
               onClick={() => setIsSettingsOpen(true)}

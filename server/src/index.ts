@@ -3,6 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import chatRoutes from "./routes/chat";
+import newsRoutes from "./routes/news";
 import { logger } from "./lib/logger";
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/api/chat", chatRoutes);
+app.use("/api/news", newsRoutes);
 
 
 app.listen(PORT, () => {

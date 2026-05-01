@@ -41,3 +41,12 @@ export const COUNTRIES: { id: Country; label: string; flag: string; suggestions:
     ]
   },
 ];
+
+export interface NewsItem {
+  title: string;
+  link: string;
+  snippet: string;
+  source: string;
+  date: string;
+  image: string | null;
+}

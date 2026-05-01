@@ -1,21 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useChatStore } from "../store/chatStore";
-import { ArrowUp, Globe, ChevronDown, Check, Sparkles } from "lucide-react";
+import { ArrowUp, Sparkles } from "lucide-react";
 import { COUNTRIES } from "../types";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const ChatInput = () => {
   const [text, setText] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
-  const { sendMessage, isLoading, selectedCountry, setCountry } = useChatStore();
+  const { sendMessage, isLoading, selectedCountry } = useChatStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
   const country = COUNTRIES.find((c) => c.id === selectedCountry);
   const countryLabel = country?.label || "Select Country";
-  const countryFlag = country?.flag || "🌍";
 
   const handleSend = () => {
     if (text.trim() && selectedCountry && !isLoading) {
@@ -38,12 +35,9 @@ export const ChatInput = () => {
     }
   }, [text]);
 
-  // Close dropdowns on click outside
+  // Close suggestions on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
       if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
         setIsSuggestionsOpen(false);
       }
@@ -56,6 +50,13 @@ export const ChatInput = () => {
     <div className="pb-2">
       <div className="max-w-4xl mx-auto px-4 md:px-0">
         <div className="relative flex flex-col bg-secondary/80 dark:bg-secondary/20 backdrop-blur-2xl border border-border dark:border-border/50 rounded-[28px] shadow-2xl shadow-black/5 focus-within:bg-secondary/90 dark:focus-within:bg-secondary/30 focus-within:border-primary/20 transition-all duration-500">
+          {selectedCountry && (
+            <div className="absolute top-3 left-6 pointer-events-none">
+              <span className="text-[9px] font-black text-primary/40 uppercase tracking-[0.3em]">
+                {countryLabel}
+              </span>
+            </div>
+          )}
           <textarea
             ref={textareaRef}
             rows={1}
@@ -68,57 +69,11 @@ export const ChatInput = () => {
                 ? `Ask about ${countryLabel} elections...`
                 : "Select a country to start"
             }
-            className="w-full px-6 py-5 bg-transparent outline-none resize-none max-h-[200px] overflow-y-auto disabled:opacity-50 text-foreground placeholder:text-muted-foreground/60 scrollbar-hide text-[15px] leading-relaxed"
+            className={`w-full px-6 ${selectedCountry ? 'pt-8' : 'py-5'} pb-5 bg-transparent outline-none resize-none max-h-[200px] overflow-y-auto disabled:opacity-50 text-foreground placeholder:text-muted-foreground/60 scrollbar-hide text-[15px] leading-relaxed transition-all duration-300`}
           />
 
           <div className="flex items-center justify-between px-4 pb-3">
             <div className="flex items-center gap-2">
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-1.5  border border-border rounded-xl hover:bg-secondary/50 transition-all duration-200"
-                >
-                  <Globe size={14} className="text-primary/70" />
-                  <span className="text-[11px] font-bold uppercase tracking-widest">
-                    {selectedCountry ? `${countryFlag} ${countryLabel}` : "Country"}
-                  </span>
-                  <ChevronDown size={14} className={`transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`} />
-                </button>
-
-                <AnimatePresence>
-                  {isDropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute bottom-full left-0 mb-2 w-56 bg-card border border-border shadow-2xl rounded-2xl overflow-hidden z-[100]"
-                    >
-                      <div className="p-2">
-                        {COUNTRIES.map((c) => (
-                          <button
-                            key={c.id}
-                            onClick={() => {
-                              setCountry(c.id);
-                              setIsDropdownOpen(false);
-                            }}
-                            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${selectedCountry === c.id
-                                ? "bg-primary/10 text-primary font-semibold"
-                                : "hover:bg-secondary text-muted-foreground hover:text-foreground"
-                              }`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span>{c.flag}</span>
-                              <span>{c.label}</span>
-                            </div>
-                            {selectedCountry === c.id && <Check size={14} />}
-                          </button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
               {selectedCountry && (
                 <div className="relative" ref={suggestionsRef}>
                   <button

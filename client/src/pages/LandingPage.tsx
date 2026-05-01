@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Vote, CheckCircle2, Globe, Shield, MessageSquare, HelpCircle, ChevronDown, Clock } from "lucide-react";
+import { ArrowRight, Vote, CheckCircle2, Globe, Shield, MessageSquare, HelpCircle, ChevronDown, Clock, Newspaper, Info, ShieldAlert, Monitor } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { ThemeToggle } from "../components/ThemeToggle";
@@ -64,6 +64,10 @@ export const LandingPage = () => {
               <a href="#features" className="hover:text-foreground transition-colors">Features</a>
               <Link to="/quiz" className="hover:text-foreground transition-colors">Quiz</Link>
               <Link to="/timeline" className="hover:text-foreground transition-colors">Timeline</Link>
+              <Link to="/process" className="hover:text-foreground transition-colors">Process</Link>
+              <Link to="/news" className="hover:text-foreground transition-colors">Live News</Link>
+              <Link to="/simulator" className="hover:text-foreground transition-colors">Simulator</Link>
+              <Link to="/myth-buster" className="hover:text-foreground transition-colors">Myth Buster</Link>
               <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
             </div>
             <ThemeToggle />
@@ -91,7 +95,7 @@ export const LandingPage = () => {
           >
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-8">
               <CheckCircle2 size={14} />
-              Empowering Global Voters
+              Empowering Informed Voters
             </span>
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1]">
               Democracy, <br />
@@ -192,7 +196,7 @@ export const LandingPage = () => {
             {[
               {
                 icon: <Globe className="text-blue-500" />,
-                title: "Global Context",
+                title: "International Context",
                 desc: "Deep knowledge about diverse election systems from Westminster models to Presidential systems."
               },
               {
@@ -209,6 +213,36 @@ export const LandingPage = () => {
                 icon: <Shield className="text-emerald-500" />,
                 title: "Reliable Data",
                 desc: "Information sourced from official documents to ensure accuracy and neutrality."
+              },
+              {
+                icon: <ArrowRight className="text-orange-500" />,
+                title: "Election Process",
+                desc: "Step-by-step guides on how elections are conducted from start to finish.",
+                link: "/process"
+              },
+              {
+                icon: <Newspaper className="text-blue-400" />,
+                title: "Live News",
+                desc: "Real-time updates and news articles on current electoral events.",
+                link: "/news"
+              },
+              {
+                icon: <HelpCircle className="text-purple-500" />,
+                title: "FAQs",
+                desc: "Quick answers to common questions about voting and election rules.",
+                link: "/faq"
+              },
+              {
+                icon: <Monitor className="text-indigo-500" />,
+                title: "Voting Simulator",
+                desc: "Experience a virtual polling booth and learn the voting steps interactively.",
+                link: "/simulator"
+              },
+              {
+                icon: <ShieldAlert className="text-red-500" />,
+                title: "Myth Buster",
+                desc: "Separate facts from rumors and understand the security of our elections.",
+                link: "/myth-buster"
               }
             ].map((f, i) => (
               <div key={i} className="p-8 bg-card border border-border/50 rounded-3xl hover:border-primary/30 transition-all group flex flex-col h-full">
@@ -217,6 +251,11 @@ export const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-bold mb-4">{f.title}</h3>
                 <p className="text-muted-foreground leading-relaxed flex-1">{f.desc}</p>
+                {"link" in f && (
+                  <Link to={f.link as string} className="mt-6 text-primary font-bold inline-flex items-center gap-2 group-hover:translate-x-1 transition-transform">
+                    Explore Now <ArrowRight size={16} />
+                  </Link>
+                )}
               </div>
             ))}
           </div>

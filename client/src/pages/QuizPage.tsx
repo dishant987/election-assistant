@@ -131,7 +131,7 @@ export const QuizPage = () => {
           {!selectedCountry ? (
             <div className="space-y-8">
               <div className="text-center mb-12">
-                <h1 className="text-4xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">The Global Voter Quiz</h1>
+                <h1 className="text-4xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">The Election Expert Quiz</h1>
                 <p className="text-muted-foreground">Select a country to test your electoral expertise</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
