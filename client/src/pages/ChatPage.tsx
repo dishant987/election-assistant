@@ -20,6 +20,7 @@ export const ChatPage = () => {
             <button
               onClick={() => setIsMobileMenuOpen(true)}
               className="md:hidden p-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Open mobile menu"
             >
               <Menu size={24} />
             </button>
@@ -62,6 +63,7 @@ export const ChatPage = () => {
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="Close mobile menu"
                   >
                     <X size={20} />
                   </button>

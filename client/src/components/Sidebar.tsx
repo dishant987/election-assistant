@@ -108,6 +108,7 @@ export const Sidebar = ({ isMobile, onClose }: { isMobile?: boolean, onClose?: (
       {/* Collapse Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
+        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         className="fixed left-0 top-1/2 -translate-y-1/2 z-40 bg-background border border-border p-1.5 rounded-r-xl shadow-xl text-muted-foreground hover:text-primary transition-all hidden md:block"
         style={{ left: isCollapsed ? 0 : 280 }}
       >

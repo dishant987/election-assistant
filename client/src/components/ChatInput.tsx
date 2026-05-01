@@ -78,6 +78,8 @@ export const ChatInput = () => {
                 <div className="relative" ref={suggestionsRef}>
                   <button
                     onClick={() => setIsSuggestionsOpen(!isSuggestionsOpen)}
+                    aria-label="Toggle suggestions"
+                    aria-expanded={isSuggestionsOpen}
                     className={`flex items-center gap-2 px-3 py-1.5 border rounded-xl transition-all duration-300 ${isSuggestionsOpen 
                       ? "bg-primary/10 border-primary/30 text-primary shadow-sm" 
                       : "border-border hover:bg-secondary/50 text-muted-foreground hover:text-foreground"
@@ -122,6 +124,7 @@ export const ChatInput = () => {
             <button
               onClick={handleSend}
               disabled={!text.trim() || !selectedCountry || isLoading}
+              aria-label="Send message"
               className={`
                 p-2.5 rounded-full transition-all duration-300
                 ${text.trim() && selectedCountry && !isLoading

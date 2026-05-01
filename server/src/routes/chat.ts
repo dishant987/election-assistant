@@ -43,8 +43,8 @@ router.post("/", chatRateLimit, validate(chatSchema), async (req, res) => {
     }
 
     const chat = model.startChat({
-      history: cleanHistory.map((msg: any) => ({
-        role: msg.role,
+      history: cleanHistory.map((msg: { role: string; parts: { text: string }[] }) => ({
+        role: msg.role as "user" | "model",
         parts: msg.parts,
       })),
     });

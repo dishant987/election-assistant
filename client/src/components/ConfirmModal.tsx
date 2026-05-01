@@ -35,14 +35,18 @@ export const ConfirmModal = ({ isOpen, onClose, onConfirm, title, description }:
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+            aria-describedby="modal-description"
             className="relative bg-card border border-border shadow-2xl rounded-3xl p-8 max-w-md w-full overflow-hidden"
           >
             <div className="flex flex-col items-center text-center">
               <div className="p-4 bg-destructive/10 rounded-2xl text-destructive mb-6">
                 <AlertCircle size={32} />
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-3">{title}</h2>
-              <p className="text-muted-foreground mb-8 leading-relaxed">
+              <h2 id="modal-title" className="text-2xl font-bold text-foreground mb-3">{title}</h2>
+              <p id="modal-description" className="text-muted-foreground mb-8 leading-relaxed">
                 {description}
               </p>
             </div>
@@ -67,6 +71,7 @@ export const ConfirmModal = ({ isOpen, onClose, onConfirm, title, description }:
 
             <button
               onClick={onClose}
+              aria-label="Close modal"
               className="absolute top-4 right-4 p-2 rounded-full hover:bg-secondary text-muted-foreground hover:text-foreground transition-all duration-200"
             >
               <X size={20} />
