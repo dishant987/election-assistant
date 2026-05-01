@@ -1,17 +1,20 @@
 # 🗳️ VoteWise: AI-Powered Election Education Assistant
 
-VoteWise is a modern, intelligent chat platform designed to educate citizens about election processes, voting rights, and democratic systems across various countries. Built with a premium glassmorphic UI and powered by Google's Gemini AI, it provides accurate, non-partisan information in multiple languages.
+VoteWise is a premium, intelligent platform designed to educate citizens about election processes, voting rights, and democratic systems. Built with a sophisticated **Enterprise-grade glassmorphic UI** and powered by **Google's Gemini AI**, it provides accurate, non-partisan information to empower voters worldwide.
 
 ![VoteWise Banner](https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?auto=format&fit=crop&q=80&w=1200&h=400)
 
-## ✨ Features
+## ✨ Key Features
 
-- **🌍 Multi-Country Context**: Specialized knowledge for elections in India, USA, UK, France, and Germany.
-- **🗣️ Multilingual Support**: Chat seamlessly in **English**, **Hindi**, and **Gujarati**.
-- **🎙️ Read Aloud (TTS)**: Integrated text-to-speech for accessibility, allowing users to listen to AI responses.
-- **⚡ Real-time Streaming**: Instant response generation using chunked transfer encoding for a smooth chat experience.
-- **🎨 Premium UI/UX**: Professional glassmorphic design with dark/light mode support, smooth animations (Framer Motion), and responsive layout.
-- **📄 Markdown Support**: Responses are rendered with full markdown support, including tables, lists, and bold text.
+- **👔 Enterprise UI/UX**: Professional, high-end design aesthetic with subtle animations (Framer Motion), glassmorphism, and seamless dark/light mode transitions.
+- **📰 Live Election News**: Real-time news feed summarized by AI, keeping users updated with the latest political developments globally, with India as the default region.
+- **🌍 Multi-Country Intelligence**: Deep contextual knowledge of electoral systems in India, USA, UK, France, and Germany.
+- **🙋 FAQ Hub**: A centralized, accessible knowledge base covering everything from voter registration to polling booth protocols.
+- **🎮 Voting Simulator**: An interactive walkthrough that guides users through the step-by-step process of casting a vote.
+- **🗣️ Multilingual Accessibility**: Seamlessly switch between **English**, **Hindi**, and **Gujarati** for inclusive education.
+- **🎙️ Read Aloud (TTS)**: Integrated high-quality text-to-speech for AI responses, enhancing accessibility for all users.
+- **🎓 Quiz & Myth Buster**: Gamified learning modules and a dedicated section to debunk common election misinformation and rumors.
+- **⏳ Election Timeline**: Visualized schedules and milestones to help voters stay ahead of important dates.
 
 ## 🚀 Tech Stack
 
@@ -26,7 +29,7 @@ VoteWise is a modern, intelligent chat platform designed to educate citizens abo
 ### Backend
 - **Runtime**: [Node.js](https://nodejs.org/) with [Express](https://expressjs.com/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **AI Engine**: [Google Gemini Pro](https://ai.google.dev/)
+- **AI Engine**: [Google Gemini 3 Flash](https://ai.google.dev/)
 - **Validation**: [Zod](https://zod.dev/)
 
 ## 🛠️ Getting Started
@@ -76,6 +79,14 @@ You need to run both the server and the client simultaneously.
    ```
    Client will run on `http://localhost:5173`.
 
+## ☁️ Deployment
+
+The application is containerized and optimized for **Google Cloud Run**.
+
+- **CI/CD**: Deployment scripts are provided for seamless GCP updates.
+- **Containerization**: Includes optimized Dockerfiles for both Client and Server.
+- **Environment**: Managed using Cloud Secret Manager for sensitive keys.
+
 ## 📁 Project Structure
 
 ```text
@@ -84,13 +95,14 @@ Election/
 │   ├── src/
 │   │   ├── components/    # Reusable UI components
 │   │   ├── hooks/         # Custom React hooks
-│   │   ├── pages/         # Page components (Home, Chat)
+│   │   ├── pages/         # Feature-specific pages (News, Simulator, FAQ, Quiz)
 │   │   ├── store/         # Zustand state management
 │   │   └── types/         # TypeScript definitions
 ├── server/                # Express Backend
 │   ├── src/
-│   │   ├── lib/           # Helper libraries (Gemini config, prompts)
-│   │   ├── middleware/    # Express middlewares
-│   │   └── routes/        # API route definitions
+│   │   ├── lib/           # Helper libraries (Gemini config, prompts, secrets)
+│   │   ├── middleware/    # Express middlewares (Rate limiting, logging)
+│   │   └── routes/        # API route definitions (Chat, News)
 └── README.md              # Main documentation
 ```
+
