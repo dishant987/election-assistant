@@ -3,6 +3,7 @@ import { ArrowRight, Vote, CheckCircle2, Globe, Shield, MessageSquare, HelpCircl
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { MobileNavbar } from "../components/MobileNavbar";
 
 const FAQItem = ({ question, answer }: { question: string, answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,8 +60,8 @@ export const LandingPage = () => {
             </div>
             <span className="text-xl font-bold tracking-tight">VoteWise</span>
           </div>
-          <div className="flex items-center gap-8">
-            <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
+          <div className="flex items-center gap-4 md:gap-8">
+            <div className="hidden lg:flex items-center gap-8 text-sm font-medium text-muted-foreground">
               <a href="#features" className="hover:text-foreground transition-colors">Features</a>
               <Link to="/quiz" className="hover:text-foreground transition-colors">Quiz</Link>
               <Link to="/timeline" className="hover:text-foreground transition-colors">Timeline</Link>
@@ -68,15 +69,18 @@ export const LandingPage = () => {
               <Link to="/news" className="hover:text-foreground transition-colors">Live News</Link>
               <Link to="/simulator" className="hover:text-foreground transition-colors">Simulator</Link>
               <Link to="/myth-buster" className="hover:text-foreground transition-colors">Myth Buster</Link>
-              <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
+              <Link to="/faq" className="hover:text-foreground transition-colors">FAQ</Link>
             </div>
-            <ThemeToggle />
-            <Link
-              to="/chat"
-              className="px-5 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20"
-            >
-              Get Started
-            </Link>
+            <div className="hidden md:flex items-center gap-4">
+              <ThemeToggle />
+              <Link
+                to="/chat"
+                className="px-5 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20"
+              >
+                Get Started
+              </Link>
+            </div>
+            <MobileNavbar />
           </div>
         </div>
       </nav>
@@ -128,31 +132,31 @@ export const LandingPage = () => {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="mt-24 relative max-w-5xl mx-auto"
+            className="mt-16 md:mt-24 relative max-w-5xl mx-auto px-2 md:px-0"
           >
-            <div className="aspect-video rounded-[32px] overflow-hidden border border-border/50 shadow-2xl bg-secondary/20 backdrop-blur-3xl relative group">
+            <div className="aspect-[4/3] md:aspect-video rounded-[24px] md:rounded-[32px] overflow-hidden border border-border/50 shadow-2xl bg-secondary/20 backdrop-blur-3xl relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-blue-500/10 opacity-50" />
 
               {/* Mock UI Header */}
-              <div className="absolute top-0 w-full h-12 bg-background/40 backdrop-blur-md border-b border-white/5 flex items-center px-6 gap-2">
+              <div className="absolute top-0 w-full h-10 md:h-12 bg-background/40 backdrop-blur-md border-b border-white/5 flex items-center px-4 md:px-6 gap-2">
                 <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/50" />
+                  <div className="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-red-500/50" />
+                  <div className="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-yellow-500/50" />
+                  <div className="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-green-500/50" />
                 </div>
-                <div className="mx-auto text-[10px] text-muted-foreground font-bold tracking-widest uppercase opacity-50">VoteWise Preview</div>
+                <div className="mx-auto text-[8px] md:text-[10px] text-muted-foreground font-bold tracking-widest uppercase opacity-50">VoteWise Preview</div>
               </div>
 
               {/* Mock Chat Content */}
-              <div className="absolute inset-0 pt-20 px-8 flex flex-col gap-6">
+              <div className="absolute inset-0 pt-16 md:pt-20 px-4 md:px-8 flex flex-col gap-4 md:gap-6">
                 {/* Mock User Message */}
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 1, duration: 0.5 }}
-                  className="self-end max-w-[70%]"
+                  className="self-end max-w-[85%] md:max-w-[70%]"
                 >
-                  <div className="bg-primary px-6 py-4 rounded-3xl rounded-tr-none text-primary-foreground text-sm font-medium shadow-xl shadow-primary/20">
+                  <div className="bg-primary px-4 md:px-6 py-3 md:py-4 rounded-2xl md:rounded-3xl rounded-tr-none text-primary-foreground text-xs md:text-sm font-medium shadow-xl shadow-primary/20">
                     How do elections work in India?
                   </div>
                 </motion.div>
@@ -162,16 +166,16 @@ export const LandingPage = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 2, duration: 0.5 }}
-                  className="self-start max-w-[80%] flex gap-4"
+                  className="self-start max-w-[90%] md:max-w-[80%] flex gap-3 md:gap-4"
                 >
-                  <div className="w-10 h-10 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
-                    <Vote size={20} className="text-primary" />
+                  <div className="w-8 md:w-10 h-8 md:h-10 rounded-xl md:rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
+                    <Vote size={16} className="text-primary" />
                   </div>
-                  <div className="bg-background/60 backdrop-blur-xl border border-white/10 px-4 py-4 rounded-3xl rounded-tl-none text-sm text-foreground leading-relaxed shadow-xl">
-                    Indian elections are the world's largest democratic exercise! They follow a multi-phase process managed by the Election Commission of India...
+                  <div className="bg-background/60 backdrop-blur-xl border border-white/10 px-3 md:px-4 py-3 md:py-4 rounded-2xl md:rounded-3xl rounded-tl-none text-[10px] md:text-sm text-foreground leading-relaxed shadow-xl">
+                    Indian elections are the world's largest democratic exercise! They follow a multi-phase process managed by the Election Commission...
                     <div className="mt-2 flex gap-1">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" />
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]" />
+                      <div className="w-1 md:w-1.5 h-1 md:h-1.5 bg-primary rounded-full animate-bounce" />
+                      <div className="w-1 md:w-1.5 h-1 md:h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]" />
                     </div>
                   </div>
                 </motion.div>

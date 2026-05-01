@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { MobileNavbar } from "../components/MobileNavbar";
 import { COUNTRIES } from "../types";
 
 interface FAQItem {
@@ -140,14 +141,17 @@ export const FAQPage = () => {
             </div>
             <span className="text-xl font-bold tracking-tight">VoteWise</span>
           </Link>
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-            <Link
-              to="/chat"
-              className="px-5 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-all"
-            >
-              Back to Chat
-            </Link>
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="hidden md:flex items-center gap-4">
+              <ThemeToggle />
+              <Link
+                to="/chat"
+                className="px-5 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-all"
+              >
+                Back to Chat
+              </Link>
+            </div>
+            <MobileNavbar />
           </div>
         </div>
       </nav>
@@ -201,7 +205,7 @@ export const FAQPage = () => {
                 className="w-full pl-12 pr-4 py-4 bg-card border border-border/50 rounded-2xl focus:outline-none focus:border-primary/50 transition-all text-lg"
               />
             </div>
-            <div className="flex bg-secondary/50 p-1.5 rounded-2xl border border-border/50 backdrop-blur-xl shrink-0">
+            <div className="flex bg-secondary/50 p-1.5 rounded-2xl border border-border/50 backdrop-blur-xl shrink-0 overflow-x-auto scrollbar-hide max-w-full">
               <button
                 onClick={() => setActiveCategory("all")}
                 className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${activeCategory === "all" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-secondary"

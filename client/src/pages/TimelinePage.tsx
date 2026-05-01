@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Vote, Calendar, MapPin, Landmark, Users, Award, Clock, Globe, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { MobileNavbar } from "../components/MobileNavbar";
 
 interface TimelineEvent {
   year: string;
@@ -68,14 +69,17 @@ export const TimelinePage = () => {
             </div>
             <span className="text-xl font-bold tracking-tight">VoteWise</span>
           </Link>
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-            <Link
-              to="/chat"
-              className="px-5 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-all"
-            >
-              Back to Chat
-            </Link>
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="hidden md:flex items-center gap-4">
+              <ThemeToggle />
+              <Link
+                to="/chat"
+                className="px-5 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-all"
+              >
+                Back to Chat
+              </Link>
+            </div>
+            <MobileNavbar />
           </div>
         </div>
       </nav>
