@@ -1,0 +1,16 @@
+# Deployment scripts (containing secrets)
+deploy.bat
+deploy.ps1
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Build artifacts
+dist/
+build/
