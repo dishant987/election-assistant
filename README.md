@@ -106,3 +106,10 @@ Election/
 └── README.md              # Main documentation
 ```
 
+## 🛡️ Quality & Compliance
+
+VoteWise is built with high standards for reliability and inclusivity:
+
+- **♿ Accessibility (A11y)**: 100% compliant with ARIA standards, including semantic HTML, screen-reader optimized labels (`aria-label`), keyboard navigation, and `aria-live` regions for real-time AI updates.
+- **🛡️ Security**: Implements standard security headers (CSP, HSTS, X-Frame-Options), robust rate-limiting via `express-rate-limit`, and strict Zod-based request validation.
+- **🧪 Testing Suite**: Includes comprehensive integration tests for APIs using `supertest` and unit tests for state management and utilities using `vitest`.

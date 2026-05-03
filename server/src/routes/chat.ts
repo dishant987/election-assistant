@@ -22,7 +22,11 @@ const chatSchema = z.object({
   ).min(1),
 });
 
-router.post("/", chatRateLimit, validate(chatSchema), async (req, res) => {
+/**
+ * POST /api/chat
+ * Handles streaming chat responses from Gemini AI
+ */
+router.post("/", chatRateLimit, validate(chatSchema, "body"), async (req, res) => {
   const { country, messages, language = "English" } = req.body;
   
   const languageInstruction = `\n\nLANGUAGE SETTING: Your response MUST be in ${language}. 

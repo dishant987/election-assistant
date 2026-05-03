@@ -266,6 +266,7 @@ export const NewsPage = () => {
                     key={c.id}
                     onClick={() => handleCountryChange(c.id)}
                     disabled={cooldown > 0 || loading}
+                    aria-label={`Show news for ${c.label}`}
                     className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${selectedCountry === c.id
                       ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                       : "hover:bg-secondary/50 text-muted-foreground"

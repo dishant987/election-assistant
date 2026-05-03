@@ -69,6 +69,12 @@ const myths: Myth[] = [
   }
 ];
 
+/**
+ * MythBusterPage component debunks common election myths and rumors.
+ * It provides a searchable and categorizable list of myths with factual explanations.
+ * 
+ * @returns {JSX.Element} The rendered myth buster page.
+ */
 export const MythBusterPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -85,10 +91,14 @@ export const MythBusterPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
+      <nav 
+        className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-border/50"
+        role="navigation"
+        aria-label="Main navigation"
+      >
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="p-2 bg-primary rounded-xl shadow-lg shadow-primary/20">
+          <Link to="/" className="flex items-center gap-3" aria-label="VoteWise Home">
+            <div className="p-2 bg-primary rounded-xl shadow-lg shadow-primary/20" aria-hidden="true">
               <Vote size={24} className="text-primary-foreground" />
             </div>
             <span className="text-xl font-bold tracking-tight">VoteWise</span>
@@ -99,6 +109,7 @@ export const MythBusterPage = () => {
               <Link
                 to="/chat"
                 className="px-5 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-all"
+                aria-label="Back to chat assistant"
               >
                 Back to Chat
               </Link>
@@ -108,16 +119,16 @@ export const MythBusterPage = () => {
         </div>
       </nav>
 
-      <main className="flex-1 pt-32 pb-16 px-6 max-w-7xl mx-auto w-full">
+      <main className="flex-1 pt-32 pb-16 px-6 max-w-7xl mx-auto w-full" id="main-content">
         {/* Header */}
         <div className="text-center mb-16 relative">
-           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/20 rounded-full blur-[100px] -z-10" />
+           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/20 rounded-full blur-[100px] -z-10" aria-hidden="true" />
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold mb-6 border border-primary/20"
           >
-            <ShieldAlert size={16} />
+            <ShieldAlert size={16} aria-hidden="true" />
             Electoral Integrity
           </motion.div>
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
@@ -131,18 +142,21 @@ export const MythBusterPage = () => {
         {/* Filters */}
         <div className="flex flex-col md:flex-row items-center gap-6 mb-12">
           <div className="relative flex-1 w-full">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} aria-hidden="true" />
             <input 
               type="text" 
               placeholder="Search rumors or myths..."
               className="w-full pl-12 pr-6 py-4 bg-card/40 border border-border/50 rounded-2xl focus:border-primary/50 outline-none transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              aria-label="Search election myths"
             />
           </div>
-          <div className="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto">
+          <div className="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto" role="tablist" aria-label="Myth categories">
             <button 
               onClick={() => setSelectedCategory(null)}
+              role="tab"
+              aria-selected={!selectedCategory}
               className={`px-4 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${!selectedCategory ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-secondary/80"}`}
             >
               All
@@ -151,6 +165,8 @@ export const MythBusterPage = () => {
               <button 
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
+                role="tab"
+                aria-selected={selectedCategory === cat}
                 className={`px-4 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${selectedCategory === cat ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-secondary/80"}`}
               >
                 {cat}
@@ -160,7 +176,12 @@ export const MythBusterPage = () => {
         </div>
 
         {/* Myth Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div 
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+          role="region"
+          aria-label="Debunked myths list"
+          aria-live="polite"
+        >
           <AnimatePresence>
             {filteredMyths.map((item, idx) => (
               <motion.div
@@ -177,7 +198,7 @@ export const MythBusterPage = () => {
                     <span className="px-3 py-1 rounded-full bg-secondary text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                       {item.category}
                     </span>
-                    <div className="p-2 bg-red-500/10 rounded-lg text-red-500">
+                    <div className="p-2 bg-red-500/10 rounded-lg text-red-500" aria-hidden="true">
                       <XCircle size={20} />
                     </div>
                   </div>
@@ -187,7 +208,7 @@ export const MythBusterPage = () => {
                   
                   <div className="space-y-4 mt-8 pt-8 border-t border-border/50">
                     <div className="flex items-start gap-3">
-                      <div className="p-1 bg-emerald-500/10 rounded-md text-emerald-500 mt-1">
+                      <div className="p-1 bg-emerald-500/10 rounded-md text-emerald-500 mt-1" aria-hidden="true">
                         <CheckCircle2 size={16} />
                       </div>
                       <div>
@@ -197,7 +218,7 @@ export const MythBusterPage = () => {
                     </div>
                     
                     <div className="flex items-start gap-3 pt-4">
-                      <div className="p-1 bg-blue-500/10 rounded-md text-blue-500 mt-1">
+                      <div className="p-1 bg-blue-500/10 rounded-md text-blue-500 mt-1" aria-hidden="true">
                         <Info size={16} />
                       </div>
                       <div>
@@ -210,7 +231,7 @@ export const MythBusterPage = () => {
                 
                 <div className="p-4 bg-secondary/30 border-t border-border/50 flex justify-center">
                    <p className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
-                      <Zap size={10} className="text-orange-500" /> Source: Election Commission Guidelines
+                      <Zap size={10} className="text-orange-500" aria-hidden="true" /> Source: Election Commission Guidelines
                    </p>
                 </div>
               </motion.div>
@@ -224,8 +245,10 @@ export const MythBusterPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mt-20 p-12 bg-gradient-to-br from-primary to-blue-700 rounded-[40px] text-primary-foreground overflow-hidden relative"
+          role="region"
+          aria-label="Ask AI Assistant"
         >
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[80px] -mr-48 -mt-48" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[80px] -mr-48 -mt-48" aria-hidden="true" />
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left">
               <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Have you heard a different rumor?</h2>
@@ -236,8 +259,9 @@ export const MythBusterPage = () => {
             <Link 
               to="/chat" 
               className="px-8 py-4 bg-white text-primary rounded-2xl font-bold shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 whitespace-nowrap"
+              aria-label="Start chatting with AI assistant to verify myths"
             >
-              Ask AI Now <MessageCircle size={20} />
+              Ask AI Now <MessageCircle size={20} aria-hidden="true" />
             </Link>
           </div>
         </motion.div>
@@ -245,7 +269,7 @@ export const MythBusterPage = () => {
         {/* Footer Info */}
         <div className="mt-20 grid md:grid-cols-2 gap-8">
            <div className="flex gap-6 p-8 bg-card/40 rounded-[32px] border border-border/50">
-              <div className="shrink-0 w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+              <div className="shrink-0 w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500" aria-hidden="true">
                 <HelpCircle size={24} />
               </div>
               <div>
@@ -254,7 +278,7 @@ export const MythBusterPage = () => {
               </div>
            </div>
            <div className="flex gap-6 p-8 bg-card/40 rounded-[32px] border border-border/50">
-              <div className="shrink-0 w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+              <div className="shrink-0 w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500" aria-hidden="true">
                 <ArrowRight size={24} />
               </div>
               <div>
@@ -265,7 +289,7 @@ export const MythBusterPage = () => {
         </div>
       </main>
 
-      <footer className="py-12 border-t border-border/50 mt-auto">
+      <footer className="py-12 border-t border-border/50 mt-auto" role="contentinfo">
         <div className="max-w-7xl mx-auto px-6 text-center text-sm text-muted-foreground">
           <p>© 2026 VoteWise. Fighting misinformation with knowledge.</p>
         </div>

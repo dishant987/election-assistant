@@ -41,6 +41,8 @@ const CustomSelect = ({
       
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={`Select ${label}`}
+        aria-expanded={isOpen}
         className={`w-full flex items-center justify-between px-4 py-3.5 bg-secondary/30 border rounded-2xl transition-all duration-300 ${
           isOpen ? "border-primary ring-4 ring-primary/10" : "border-white/5 hover:border-white/10"
         }`}
@@ -135,6 +137,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
               </div>
               <button
                 onClick={onClose}
+                aria-label="Close settings"
                 className="p-2 rounded-full hover:bg-secondary text-muted-foreground transition-all"
               >
                 <X size={18} />

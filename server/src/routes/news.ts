@@ -1,16 +1,25 @@
 import express from "express";
+import { z } from "zod";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getSecret } from "../lib/secrets";
 import { logger } from "../lib/logger";
+import { validate } from "../middleware/validate";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
-  const { country } = req.query;
+/**
+ * Schema for news request validation
+ */
+const newsQuerySchema = z.object({
+  country: z.string().min(2).max(50),
+});
 
-  if (!country) {
-    return res.status(400).json({ error: "Country is required" });
-  }
+/**
+ * GET /api/news
+ * Fetches latest election news using Gemini AI
+ */
+router.get("/", validate(newsQuerySchema, "query"), async (req, res, next) => {
+  const country = req.query.country as string;
 
   try {
     const apiKey = await getSecret("GEMINI_API_KEY");
@@ -18,14 +27,13 @@ router.get("/", async (req, res) => {
     if (!apiKey) {
       logger.error("GEMINI_API_KEY is not defined");
       return res.status(500).json({
-        error: "Gemini API not configured",
+        error: { message: "Gemini API not configured", code: "CONFIG_ERROR" },
       });
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-
     const model = genAI.getGenerativeModel({
-      model: "gemini-3-flash-preview",
+      model: "gemini-1.5-flash", // Using stable version
       generationConfig: {
         responseMimeType: "application/json",
       },
@@ -33,35 +41,27 @@ router.get("/", async (req, res) => {
 
     const prompt = `
 Give exactly 10 latest election-related news articles for ${country}.
-
 Return strictly in JSON format:
-
 {
   "news": [
     {
-      "title": "",
-      "link": "",
-      "snippet": "",
-      "source": "",
-      "date": "",
+      "title": "Clear headline",
+      "link": "https://example.com",
+      "snippet": "Short summary",
+      "source": "News agency",
+      "date": "Relative or absolute date",
       "image": null
     }
   ]
 }
-
-Rules:
-- No explanation
-- No markdown
-- No code blocks
-- Only valid JSON
+Rules: No markdown, only valid JSON, focused on current election events.
 `;
 
     const result = await model.generateContent(prompt);
-
     const responseText = result.response.text();
 
     if (!responseText) {
-      throw new Error("Empty response from Gemini");
+      throw new Error("Empty response from Gemini AI");
     }
 
     let data;
@@ -69,20 +69,17 @@ Rules:
       data = JSON.parse(responseText);
     } catch (err) {
       logger.error("JSON parse error:", responseText);
-      throw new Error("Invalid JSON from Gemini");
+      throw new Error("Invalid response format from AI");
     }
 
     res.json({
       news: Array.isArray(data.news) ? data.news : [],
+      timestamp: new Date().toISOString()
     });
 
   } catch (error: any) {
-    logger.error("Gemini error:", error);
-
-    res.status(500).json({
-      error: "Failed to fetch news",
-      details: error.message || "Unknown error",
-    });
+    logger.error("News Fetch Error:", error);
+    next(error); // Pass to global error handler
   }
 });
 

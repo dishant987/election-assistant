@@ -58,6 +58,12 @@ const countries = [
   { name: "UK", flag: "🇬🇧", color: "from-blue-800 to-red-700" },
 ];
 
+/**
+ * QuizPage component tests the user's knowledge about election processes in different countries.
+ * It features a multiple-choice quiz with explanations for each answer.
+ * 
+ * @returns {JSX.Element} The rendered quiz page.
+ */
 export const QuizPage = () => {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -103,10 +109,14 @@ export const QuizPage = () => {
   return (
     <div className="min-h-screen bg-background selection:bg-primary/20 flex flex-col">
       {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
+      <nav 
+        className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-border/50"
+        role="navigation"
+        aria-label="Main navigation"
+      >
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="p-2 bg-primary rounded-xl shadow-lg shadow-primary/20">
+          <Link to="/" className="flex items-center gap-3" aria-label="VoteWise Home">
+            <div className="p-2 bg-primary rounded-xl shadow-lg shadow-primary/20" aria-hidden="true">
               <Vote size={24} className="text-primary-foreground" />
             </div>
             <span className="text-xl font-bold tracking-tight">VoteWise</span>
@@ -117,6 +127,7 @@ export const QuizPage = () => {
               <Link
                 to="/chat"
                 className="px-5 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-all"
+                aria-label="Back to chat assistant"
               >
                 Back to Chat
               </Link>
@@ -126,14 +137,14 @@ export const QuizPage = () => {
         </div>
       </nav>
 
-      <main className="flex-1 pt-32 pb-16 px-6 relative overflow-hidden">
+      <main className="flex-1 pt-32 pb-16 px-6 relative overflow-hidden" id="main-content">
         {/* Background Glows */}
-        <div className="absolute top-1/4 -left-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10" />
-        <div className="absolute bottom-1/4 -right-1/4 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] -z-10" />
+        <div className="absolute top-1/4 -left-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10" aria-hidden="true" />
+        <div className="absolute bottom-1/4 -right-1/4 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] -z-10" aria-hidden="true" />
 
         <div className="max-w-3xl mx-auto w-full">
           {!selectedCountry ? (
-            <div className="space-y-8">
+            <div className="space-y-8" role="region" aria-label="Country selection for quiz">
               <div className="text-center mb-12">
                 <h1 className="text-4xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">The Election Expert Quiz</h1>
                 <p className="text-muted-foreground">Select a country to test your electoral expertise</p>
@@ -144,32 +155,41 @@ export const QuizPage = () => {
                     key={country.name}
                     onClick={() => selectCountry(country.name)}
                     className="group relative p-8 bg-card/40 backdrop-blur-xl border border-border/50 rounded-[32px] overflow-hidden hover:border-primary/50 transition-all text-center flex flex-col items-center gap-4"
+                    aria-label={`Start ${country.name} election quiz`}
                   >
-                    <div className={`absolute inset-0 bg-gradient-to-br ${country.color} opacity-0 group-hover:opacity-5 transition-opacity`} />
-                    <div className="text-6xl group-hover:scale-110 transition-transform">{country.flag}</div>
+                    <div className={`absolute inset-0 bg-gradient-to-br ${country.color} opacity-0 group-hover:opacity-5 transition-opacity`} aria-hidden="true" />
+                    <div className="text-6xl group-hover:scale-110 transition-transform" role="img" aria-label={`${country.name} flag`}>{country.flag}</div>
                     <h3 className="text-xl font-bold">{country.name}</h3>
                   </button>
                 ))}
               </div>
             </div>
           ) : !showResult ? (
-            <div className="space-y-8">
+            <div className="space-y-8" role="region" aria-label={`${selectedCountry} quiz progress`}>
               <div className="flex items-center justify-between">
                 <button
                   onClick={() => setSelectedCountry(null)}
                   className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary transition-colors"
+                  aria-label="Change country"
                 >
-                  <ChevronLeft size={16} />
+                  <ChevronLeft size={16} aria-hidden="true" />
                   Change Country
                 </button>
                 <div className="flex items-center gap-3">
                   <span className="text-lg font-bold">{selectedCountry}</span>
-                  <div className="w-px h-4 bg-border" />
-                  <div className="text-sm font-bold text-primary">Question {currentQuestion + 1} of {questions.length}</div>
+                  <div className="w-px h-4 bg-border" aria-hidden="true" />
+                  <div className="text-sm font-bold text-primary" aria-live="polite">Question {currentQuestion + 1} of {questions.length}</div>
                 </div>
               </div>
 
-              <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+              <div 
+                className="w-full h-2 bg-secondary rounded-full overflow-hidden"
+                role="progressbar"
+                aria-valuenow={currentQuestion + 1}
+                aria-valuemin={1}
+                aria-valuemax={questions.length}
+                aria-label="Quiz progress"
+              >
                 <motion.div
                   className="h-full bg-primary"
                   initial={{ width: 0 }}
@@ -184,7 +204,7 @@ export const QuizPage = () => {
                 exit={{ opacity: 0, x: -20 }}
                 className="bg-card/50 backdrop-blur-xl border border-border/50 rounded-[32px] p-8 md:p-12 shadow-2xl relative"
               >
-                <div className="absolute -top-6 -left-6 w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
+                <div className="absolute -top-6 -left-6 w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20" aria-hidden="true">
                   <HelpCircle className="text-primary-foreground" />
                 </div>
 
@@ -192,7 +212,7 @@ export const QuizPage = () => {
                   {questions[currentQuestion].question}
                 </h2>
 
-                <div className="grid gap-4">
+                <div className="grid gap-4" role="radiogroup" aria-label="Question options">
                   {questions[currentQuestion].options.map((option, index) => {
                     const isCorrect = index === questions[currentQuestion].correctAnswer;
                     const isSelected = selectedOption === index;
@@ -204,6 +224,8 @@ export const QuizPage = () => {
                         key={index}
                         onClick={() => handleOptionClick(index)}
                         disabled={selectedOption !== null}
+                        role="radio"
+                        aria-checked={isSelected}
                         className={`w-full p-5 rounded-2xl border-2 text-left transition-all duration-300 flex items-center justify-between group
                           ${isSelected ? (isCorrect ? "border-emerald-500 bg-emerald-500/10" : "border-red-500 bg-red-500/10") : 
                             (showCorrect ? "border-emerald-500 bg-emerald-500/10" : "border-border hover:border-primary/50 hover:bg-secondary/50")}
@@ -211,8 +233,8 @@ export const QuizPage = () => {
                         `}
                       >
                         <span className="font-medium">{option}</span>
-                        {showCorrect && <CheckCircle2 className="text-emerald-500" size={20} />}
-                        {showWrong && <XCircle className="text-red-500" size={20} />}
+                        {showCorrect && <CheckCircle2 className="text-emerald-500" size={20} aria-label="Correct answer" />}
+                        {showWrong && <XCircle className="text-red-500" size={20} aria-label="Incorrect answer" />}
                       </button>
                     );
                   })}
@@ -224,6 +246,7 @@ export const QuizPage = () => {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       className="mt-8 pt-8 border-t border-border/50"
+                      aria-live="assertive"
                     >
                       <div className="p-4 rounded-2xl bg-secondary/50 text-sm leading-relaxed">
                         <span className="font-bold text-primary block mb-1">Explanation:</span>
@@ -232,9 +255,10 @@ export const QuizPage = () => {
                       <button
                         onClick={handleNext}
                         className="mt-6 w-full py-4 bg-primary text-primary-foreground rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20"
+                        aria-label={currentQuestion + 1 === questions.length ? "Finish Quiz" : "Next Question"}
                       >
                         {currentQuestion + 1 === questions.length ? "Finish Quiz" : "Next Question"}
-                        <ArrowRight size={20} />
+                        <ArrowRight size={20} aria-hidden="true" />
                       </button>
                     </motion.div>
                   )}
@@ -246,8 +270,10 @@ export const QuizPage = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-card/50 backdrop-blur-xl border border-border/50 rounded-[32px] p-12 text-center shadow-2xl"
+              role="region"
+              aria-label="Quiz results"
             >
-              <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-8">
+              <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-8" aria-hidden="true">
                 <Trophy size={48} className="text-primary" />
               </div>
               <h2 className="text-4xl font-extrabold mb-4">Quiz Completed!</h2>
@@ -270,16 +296,18 @@ export const QuizPage = () => {
                 <button
                   onClick={resetQuiz}
                   className="flex-1 py-4 bg-secondary text-foreground rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-secondary/80 transition-all"
+                  aria-label="Try the quiz again"
                 >
-                  <RefreshCcw size={20} />
+                  <RefreshCcw size={20} aria-hidden="true" />
                   Try Again
                 </button>
                 <button
                   onClick={() => setSelectedCountry(null)}
                   className="flex-1 py-4 bg-primary text-primary-foreground rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20"
+                  aria-label="Select a new country for the quiz"
                 >
                   New Country
-                  <Globe size={20} />
+                  <Globe size={20} aria-hidden="true" />
                 </button>
               </div>
             </motion.div>

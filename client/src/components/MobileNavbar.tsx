@@ -4,6 +4,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
 
+/**
+ * MobileNavbar component provides a responsive navigation menu for small screens.
+ * It features a slide-down overlay with navigation links and a theme toggle.
+ * 
+ * @returns {JSX.Element} The rendered mobile navbar.
+ */
 export const MobileNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -24,6 +30,8 @@ export const MobileNavbar = () => {
         onClick={() => setIsOpen(true)}
         className="p-2 -mr-2 text-foreground hover:bg-secondary/80 rounded-xl transition-all"
         aria-label="Open Menu"
+        aria-expanded={isOpen}
+        aria-controls="mobile-menu"
       >
         <Menu size={24} />
       </button>
@@ -31,6 +39,10 @@ export const MobileNavbar = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile navigation menu"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -39,7 +51,7 @@ export const MobileNavbar = () => {
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-border/50 bg-background">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-primary rounded-lg shadow-lg shadow-primary/20">
+                <div className="p-1.5 bg-primary rounded-lg shadow-lg shadow-primary/20" aria-hidden="true">
                   <Vote size={18} className="text-primary-foreground" />
                 </div>
                 <span className="text-lg font-bold tracking-tight text-foreground">VoteWise</span>
@@ -47,14 +59,15 @@ export const MobileNavbar = () => {
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-2 -mr-2 text-foreground hover:bg-secondary rounded-xl transition-all"
+                aria-label="Close Menu"
               >
-                <X size={24} />
+                <X size={24} aria-hidden="true" />
               </button>
             </div>
 
             {/* Links Section */}
             <div className="flex-1 overflow-y-auto px-6 py-4 bg-background">
-              <nav className="flex flex-col gap-0.5">
+              <nav className="flex flex-col gap-0.5" aria-label="Mobile site links">
                 {navLinks.map((link) => (
                   <Link
                     key={link.name}
@@ -74,7 +87,7 @@ export const MobileNavbar = () => {
                     className="flex items-center justify-between w-full p-3 text-sm font-semibold text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-xl transition-all group"
                   >
                     <span>{link.name}</span>
-                    <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all" />
+                    <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all" aria-hidden="true" />
                   </Link>
                 ))}
               </nav>
@@ -90,9 +103,10 @@ export const MobileNavbar = () => {
                 to="/chat"
                 onClick={() => setIsOpen(false)}
                 className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-all text-sm"
+                aria-label="Start chatting with AI assistant"
               >
                 Start Chatting Now
-                <ArrowRight size={16} />
+                <ArrowRight size={16} aria-hidden="true" />
               </Link>
             </div>
           </motion.div>

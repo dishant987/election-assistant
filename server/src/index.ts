@@ -6,24 +6,30 @@ import chatRoutes from "./routes/chat";
 import newsRoutes from "./routes/news";
 import { logger } from "./lib/logger";
 
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+
 dotenv.config();
 
 export const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Security: Use Helmet for secure headers
+app.use(helmet());
+
+// Security: Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests, please try again later." },
+});
+app.use("/api/", limiter);
+
 app.use(cors({
   origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : "http://localhost:5173",
 }));
-
-// Manual Security Headers (since helmet might not be available)
-app.use((req, res, next) => {
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("X-XSS-Protection", "1; mode=block");
-  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-  res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.google.com");
-  next();
-});
 
 // Use morgan for console logging, but we also have our winston logger
 app.use(morgan("dev"));

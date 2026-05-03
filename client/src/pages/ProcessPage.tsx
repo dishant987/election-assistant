@@ -221,6 +221,12 @@ const countries = [
   { name: "UK", flag: "🇬🇧", color: "from-blue-800 to-red-700", shadow: "shadow-indigo-800/20" },
 ];
 
+/**
+ * ProcessPage component allows users to explore election processes of different countries.
+ * It features a step-by-step walkthrough of each country's electoral cycle.
+ * 
+ * @returns {JSX.Element} The rendered process page.
+ */
 export const ProcessPage = () => {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [activeStep, setActiveStep] = useState(0);
@@ -230,10 +236,14 @@ export const ProcessPage = () => {
   return (
     <div className="min-h-screen bg-background selection:bg-primary/20 flex flex-col">
       {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
+      <nav 
+        className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-border/50"
+        role="navigation"
+        aria-label="Main navigation"
+      >
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="p-2 bg-primary rounded-xl shadow-lg shadow-primary/20">
+          <Link to="/" className="flex items-center gap-3" aria-label="VoteWise Home">
+            <div className="p-2 bg-primary rounded-xl shadow-lg shadow-primary/20" aria-hidden="true">
               <Vote size={24} className="text-primary-foreground" />
             </div>
             <span className="text-xl font-bold tracking-tight">VoteWise</span>
@@ -244,6 +254,7 @@ export const ProcessPage = () => {
               <Link
                 to="/chat"
                 className="px-5 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-all"
+                aria-label="Back to chat assistant"
               >
                 Back to Chat
               </Link>
@@ -253,10 +264,10 @@ export const ProcessPage = () => {
         </div>
       </nav>
 
-      <main className="flex-1 pt-32 pb-16 px-6 relative overflow-hidden">
+      <main className="flex-1 pt-32 pb-16 px-6 relative overflow-hidden" id="main-content">
         {/* Background Glows */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] -z-10" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10" aria-hidden="true" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] -z-10" aria-hidden="true" />
 
         <div className="max-w-6xl mx-auto">
           <AnimatePresence mode="wait">
@@ -267,6 +278,8 @@ export const ProcessPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 className="space-y-12"
+                role="region"
+                aria-label="Country selection"
               >
                 <div className="text-center">
                   <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
@@ -285,11 +298,12 @@ export const ProcessPage = () => {
                         setActiveStep(0);
                       }}
                       className={`group relative p-12 bg-card/40 backdrop-blur-xl border border-border/50 rounded-[40px] overflow-hidden hover:border-primary/50 transition-all text-center flex flex-col items-center shadow-2xl ${country.shadow}`}
+                      aria-label={`Explore election process of ${country.name}`}
                     >
-                      <div className={`absolute inset-0 bg-gradient-to-br ${country.color} opacity-0 group-hover:opacity-10 transition-opacity`} />
-                      <div className="text-8xl mb-6 group-hover:scale-110 transition-transform duration-500">{country.flag}</div>
+                      <div className={`absolute inset-0 bg-gradient-to-br ${country.color} opacity-0 group-hover:opacity-10 transition-opacity`} aria-hidden="true" />
+                      <div className="text-8xl mb-6 group-hover:scale-110 transition-transform duration-500" role="img" aria-label={`${country.name} flag`}>{country.flag}</div>
                       <h3 className="text-2xl font-bold">{country.name}</h3>
-                      <p className="mt-4 text-sm text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">Explore Process <ArrowRight size={14} className="inline ml-1" /></p>
+                      <p className="mt-4 text-sm text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">Explore Process <ArrowRight size={14} className="inline ml-1" aria-hidden="true" /></p>
                     </button>
                   ))}
                 </div>
@@ -301,17 +315,20 @@ export const ProcessPage = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-8"
+                role="region"
+                aria-label={`${selectedCountry} election process walkthrough`}
               >
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                   <button
                     onClick={() => setSelectedCountry(null)}
                     className="flex items-center gap-2 px-4 py-2 bg-secondary/50 rounded-xl text-sm font-bold text-muted-foreground hover:text-primary hover:bg-secondary transition-all"
+                    aria-label="Change country"
                   >
-                    <ChevronLeft size={16} />
+                    <ChevronLeft size={16} aria-hidden="true" />
                     Change Country
                   </button>
                   <div className="flex items-center gap-4">
-                    <span className="text-4xl">{countries.find(c => c.name === selectedCountry)?.flag}</span>
+                    <span className="text-4xl" role="img" aria-label={`${selectedCountry} flag`}>{countries.find(c => c.name === selectedCountry)?.flag}</span>
                     <div className="text-left">
                       <h2 className="text-2xl font-bold">{selectedCountry} Election Cycle</h2>
                       <p className="text-sm text-muted-foreground">From Preparation to Results</p>
@@ -321,18 +338,19 @@ export const ProcessPage = () => {
 
                 <div className="grid lg:grid-cols-[350px_1fr] gap-8 mt-12">
                   {/* Steps List */}
-                  <div className="space-y-3">
+                  <nav className="space-y-3" aria-label="Process steps">
                     {steps.map((step, index) => (
                       <button
                         key={index}
                         onClick={() => setActiveStep(index)}
+                        aria-pressed={activeStep === index}
                         className={`w-full p-4 rounded-2xl border transition-all text-left flex items-center gap-4 group ${activeStep === index
                             ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
                             : "bg-card/40 border-border/50 hover:border-primary/30"
                           }`}
                       >
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${activeStep === index ? "bg-white/20" : "bg-secondary group-hover:bg-primary/10 transition-colors"
-                          }`}>
+                          }`} aria-hidden="true">
                           {step.icon}
                         </div>
                         <div className="flex-1">
@@ -343,10 +361,10 @@ export const ProcessPage = () => {
                         </div>
                       </button>
                     ))}
-                  </div>
+                  </nav>
 
                   {/* Active Step Detail */}
-                  <div className="relative">
+                  <div className="relative" aria-live="polite">
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={activeStep}
@@ -355,10 +373,10 @@ export const ProcessPage = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className="bg-card/40 backdrop-blur-xl border border-border/50 rounded-[32px] p-8 md:p-12 h-full shadow-2xl relative overflow-hidden"
                       >
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10 -mr-32 -mt-32" />
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10 -mr-32 -mt-32" aria-hidden="true" />
 
                         <div className="flex items-center gap-6 mb-8">
-                          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary" aria-hidden="true">
                             {steps[activeStep].icon}
                           </div>
                           <div>
@@ -373,7 +391,7 @@ export const ProcessPage = () => {
 
                         <div className="space-y-6">
                           <h4 className="text-sm font-bold uppercase tracking-widest flex items-center gap-2">
-                            <Info size={16} className="text-primary" />
+                            <Info size={16} className="text-primary" aria-hidden="true" />
                             Key Components
                           </h4>
                           <div className="grid sm:grid-cols-2 gap-4">
@@ -385,7 +403,7 @@ export const ProcessPage = () => {
                                 key={i}
                                 className="flex items-start gap-3 p-4 bg-secondary/30 rounded-2xl border border-border/50"
                               >
-                                <CheckCircle2 size={18} className="text-primary shrink-0 mt-0.5" />
+                                <CheckCircle2 size={18} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
                                 <span className="text-sm font-medium leading-tight">{detail}</span>
                               </motion.div>
                             ))}
@@ -398,17 +416,19 @@ export const ProcessPage = () => {
                             disabled={activeStep === 0}
                             onClick={() => setActiveStep(prev => prev - 1)}
                             className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-secondary"
+                            aria-label="Previous step"
                           >
-                            <ChevronLeft size={20} />
+                            <ChevronLeft size={20} aria-hidden="true" />
                             Previous
                           </button>
                           <button
                             disabled={activeStep === steps.length - 1}
                             onClick={() => setActiveStep(prev => prev + 1)}
                             className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-0"
+                            aria-label="Next step"
                           >
                             Next Step
-                            <ArrowRight size={20} />
+                            <ArrowRight size={20} aria-hidden="true" />
                           </button>
                         </div>
                       </motion.div>
@@ -421,7 +441,7 @@ export const ProcessPage = () => {
         </div>
       </main>
 
-      <footer className="py-12 border-t border-border/50">
+      <footer className="py-12 border-t border-border/50" role="contentinfo">
         <div className="max-w-7xl mx-auto px-6 text-center text-sm text-muted-foreground">
           <p>© 2026 VoteWise. Knowledge is the foundation of democracy.</p>
         </div>
