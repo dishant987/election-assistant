@@ -64,6 +64,7 @@ export const ChatInput = () => {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isLoading}
+            aria-label="Ask about election process"
             placeholder={
               selectedCountry
                 ? `Ask about ${countryLabel} elections...`

@@ -5,18 +5,25 @@ import { useState } from "react";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { MobileNavbar } from "../components/MobileNavbar";
 
-const FAQItem = ({ question, answer }: { question: string, answer: string }) => {
+const FAQItem = ({ question, answer, id }: { question: string, answer: string, id: string }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const contentId = `faq-content-${id}`;
+  
   return (
     <div className="border-b border-border/50">
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-controls={contentId}
         className="w-full py-6 flex items-center justify-between text-left hover:text-primary transition-colors group"
       >
         <span className="text-lg font-semibold">{question}</span>
-        <ChevronDown className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} aria-hidden="true" />
       </button>
       <motion.div
+        id={contentId}
+        role="region"
+        aria-label={question}
         initial={false}
         animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
         className="overflow-hidden"
@@ -275,7 +282,7 @@ export const LandingPage = () => {
           </div>
           <div className="space-y-2">
             {faqs.map((faq, i) => (
-              <FAQItem key={i} {...faq} />
+              <FAQItem key={i} id={i.toString()} {...faq} />
             ))}
           </div>
         </div>

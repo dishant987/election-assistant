@@ -96,15 +96,17 @@ export const TimelinePage = () => {
                 <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">Democratic Journey</h1>
                 <p className="text-xl text-muted-foreground">Select a country to explore its historical electoral milestones.</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8" role="list">
                 {countries.map((country) => (
                   <button
                     key={country.name}
                     onClick={() => setSelectedCountry(country.name)}
+                    aria-label={`Explore timeline for ${country.name}`}
+                    role="listitem"
                     className="group relative p-12 bg-card/40 backdrop-blur-xl border border-border/50 rounded-[40px] overflow-hidden hover:border-primary/50 transition-all text-center flex flex-col items-center"
                   >
-                    <div className={`absolute inset-0 bg-gradient-to-br ${country.color} opacity-0 group-hover:opacity-10 transition-opacity`} />
-                    <div className="text-8xl mb-6 group-hover:scale-110 transition-transform duration-500">{country.flag}</div>
+                    <div className={`absolute inset-0 bg-gradient-to-br ${country.color} opacity-0 group-hover:opacity-10 transition-opacity`} aria-hidden="true" />
+                    <div className="text-8xl mb-6 group-hover:scale-110 transition-transform duration-500" aria-hidden="true">{country.flag}</div>
                     <h3 className="text-2xl font-bold">{country.name}</h3>
                   </button>
                 ))}
@@ -130,10 +132,11 @@ export const TimelinePage = () => {
                 {/* Timeline Line */}
                 <div className="absolute left-1/2 -translate-x-1/2 h-full w-1 bg-gradient-to-b from-primary/20 via-primary/50 to-primary/20 rounded-full hidden md:block" />
 
-                <div className="space-y-12 relative">
+                <div className="space-y-12 relative" role="list">
                   {events.map((event, index) => (
                     <motion.div
                       key={index}
+                      role="listitem"
                       initial={{ opacity: 0, y: 50 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, margin: "-100px" }}

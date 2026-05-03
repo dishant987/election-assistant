@@ -4,8 +4,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getSecret } from "../lib/secrets";
 import { logger } from "../lib/logger";
 import { validate } from "../middleware/validate";
+import { rateLimit } from "../middleware/rateLimit";
 
 const router = express.Router();
+
+// Rate limit: 5 requests per minute for news (since it's heavier)
+const newsRateLimit = rateLimit(5, 60 * 1000);
 
 /**
  * Schema for news request validation
@@ -18,7 +22,7 @@ const newsQuerySchema = z.object({
  * GET /api/news
  * Fetches latest election news using Gemini AI
  */
-router.get("/", validate(newsQuerySchema, "query"), async (req, res, next) => {
+router.get("/", newsRateLimit, validate(newsQuerySchema, "query"), async (req, res, next) => {
   const country = req.query.country as string;
 
   try {

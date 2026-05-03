@@ -35,23 +35,30 @@ app.use(cors({
 app.use(morgan("dev"));
 app.use(express.json());
 
-// Global Error Handler
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  logger.error("Unhandled Error:", err);
-  res.status(err.status || 500).json({
-    error: {
-      message: err.message || "Internal Server Error",
-      code: err.code || "INTERNAL_ERROR",
-    },
-  });
-});
-
 app.use("/api/chat", chatRoutes);
 app.use("/api/news", newsRoutes);
 
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: "Endpoint not found" });
+});
+
+// Global Error Handler (MUST BE LAST)
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  logger.error("Unhandled Error:", {
+    message: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method
+  });
+
+  const statusCode = err.status || err.statusCode || 500;
+  res.status(statusCode).json({
+    error: {
+      message: statusCode === 500 ? "Internal Server Error" : err.message,
+      code: err.code || "INTERNAL_ERROR",
+    },
+  });
 });
 
 app.listen(PORT, () => {

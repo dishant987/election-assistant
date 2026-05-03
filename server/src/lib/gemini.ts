@@ -18,9 +18,14 @@ const initializeGenAI = async () => {
 };
 
 export const getGeminiModel = async (systemInstruction: string) => {
-  const ai = await initializeGenAI();
-  return ai.getGenerativeModel({
-    model: "gemini-2.5-flash",
-    systemInstruction,
-  });
+  try {
+    const ai = await initializeGenAI();
+    return ai.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      systemInstruction,
+    });
+  } catch (error) {
+    logger.error("Failed to get Gemini model:", error);
+    throw error;
+  }
 };
