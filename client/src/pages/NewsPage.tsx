@@ -18,8 +18,8 @@ import { ThemeToggle } from "../components/ThemeToggle";
 import { MobileNavbar } from "../components/MobileNavbar";
 import { COUNTRIES, type NewsItem } from "../types";
 
-// News now comes from free Google News RSS, so a short anti-spam pause is enough;
-// the server still rate-limits /api/news to 5 requests per minute.
+// The server caches news per country for 10 minutes and rate-limits /api/news to 5/min,
+// so a short client-side anti-spam pause is enough.
 const COOLDOWN_SECONDS = 10;
 
 const NewsSkeleton = () => (
@@ -78,7 +78,8 @@ const NewsCard = ({ item }: { item: NewsItem }) => (
         {item.snippet}
       </p>
       <a
-        href={item.link}
+        // Links come from external feeds or AI output: only allow http(s), never javascript: URLs.
+        href={/^https?:\/\//i.test(item.link) ? item.link : undefined}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:gap-3 transition-all"

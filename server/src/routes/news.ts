@@ -17,7 +17,12 @@ const newsRateLimit = rateLimit(5, 60 * 1000);
  * Schema for news request validation
  */
 const newsQuerySchema = z.object({
-  country: z.string().min(2).max(50),
+  // Fixed list (as in /api/chat): the value keys the news cache and spends GNews quota,
+  // so arbitrary strings would let one client exhaust the free daily limit.
+  country: z.preprocess(
+    (v) => (typeof v === "string" ? v.toLowerCase() : v),
+    z.enum(["india", "usa", "france", "uk", "germany"])
+  ),
 });
 
 /** Asks Gemini for JSON; on any Gemini failure, asks Grok instead. */
@@ -51,7 +56,7 @@ router.get("/", newsRateLimit, validate(newsQuerySchema, "query"), async (req, r
       const news = await fetchElectionNews(country);
       if (news.length) return res.json({ news, timestamp: new Date().toISOString() });
     } catch (error) {
-      logger.warn("Google News RSS failed, falling back to AI:", error);
+      logger.warn("News feeds failed, falling back to AI:", error);
     }
 
     const prompt = `

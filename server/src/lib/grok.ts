@@ -20,6 +20,8 @@ export const grokComplete = async (messages: GrokMessage[], json = false): Promi
       messages,
       ...(json && { response_format: { type: "json_object" } }),
     }),
+    // Last line of defence: don't let a hung fallback hold the request until the platform kills it.
+    signal: AbortSignal.timeout(30_000),
   });
   if (!res.ok) throw new Error(`Grok API ${res.status}: ${await res.text()}`);
   const data: any = await res.json();
