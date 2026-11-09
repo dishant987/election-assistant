@@ -11,6 +11,10 @@ jest.mock("../lib/gemini", () => ({
 
 jest.mock("../lib/grok", () => ({
   grokComplete: jest.fn().mockRejectedValue(new Error("Grok Error")),
+  // eslint-disable-next-line require-yield
+  grokStream: jest.fn(async function* () {
+    throw new Error("Grok Error");
+  }),
 }));
 
 // Force the AI fallback path for news so the test never hits the network.
@@ -48,9 +52,12 @@ describe("Integration Tests", () => {
       expect(res.text).toBe("Hello there!");
     });
 
-    it("should fall back to Grok when Gemini fails", async () => {
+    it("should stream the Grok fallback when Gemini fails", async () => {
       (geminiLib.getGeminiModel as any).mockRejectedValue(new Error("Gemini Error"));
-      (grokLib.grokComplete as any).mockResolvedValueOnce("Hi from Grok");
+      (grokLib.grokStream as any).mockImplementationOnce(async function* () {
+        yield "Hi from ";
+        yield "Grok";
+      });
 
       const res = await request(app)
         .post("/api/chat")
@@ -61,7 +68,9 @@ describe("Integration Tests", () => {
 
       expect(res.status).toBe(200);
       expect(res.text).toBe("Hi from Grok");
-      expect((grokLib.grokComplete as any).mock.calls[0][0].map((m: any) => m.role)).toEqual(["system", "assistant", "user"]);
+      const sent = (grokLib.grokStream as any).mock.calls[0][0];
+      expect(sent.map((m: any) => m.role)).toEqual(["system", "assistant", "user"]);
+      expect(sent[0].content).toContain("LENGTH:");
     });
 
     it("should return 500 when Gemini and Grok both fail", async () => {

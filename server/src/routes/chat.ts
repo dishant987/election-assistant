@@ -4,7 +4,7 @@ import { validate } from "../middleware/validate";
 import { rateLimit } from "../middleware/rateLimit";
 import { COUNTRY_PROMPTS } from "../lib/countryPrompts";
 import { getGeminiModel, withTimeout, GEMINI_TIMEOUT_MS } from "../lib/gemini";
-import { grokComplete } from "../lib/grok";
+import { grokStream } from "../lib/grok";
 import { logger } from "../lib/logger";
 
 const router = Router();
@@ -38,7 +38,10 @@ router.post("/", chatRateLimit, validate(chatSchema, "body"), async (req, res) =
   // The chat UI renders basic markdown only: tables and HTML tags show up as raw text.
   const formatInstruction = `\n\nFORMATTING: Use only short paragraphs, **bold**, and bullet or numbered lists. Never use tables, headings deeper than ###, or HTML tags such as <br>.`;
 
-  const systemPrompt = COUNTRY_PROMPTS[country] + languageInstruction + formatInstruction;
+  // Without this the models write ~250 words even when asked to "keep it short".
+  const lengthInstruction = `\n\nLENGTH: Match the length the user asks for. If they ask for a short, brief or quick answer, reply in at most 3 sentences with no follow-up questions or extra sections. Otherwise keep answers concise (about 80-150 words) and end with at most 2 one-line follow-up questions. Only write more when the user asks for detail.`;
+
+  const systemPrompt = COUNTRY_PROMPTS[country] + languageInstruction + formatInstruction + lengthInstruction;
 
   try {
     const model = await getGeminiModel(systemPrompt);
@@ -78,17 +81,23 @@ router.post("/", chatRateLimit, validate(chatSchema, "body"), async (req, res) =
 
     try {
       logger.warn("Gemini chat failed, falling back to Grok");
-      const text = await grokComplete([
+      const stream = grokStream([
         { role: "system", content: systemPrompt },
         ...messages.map((m: { role: string; parts: { text: string }[] }) => ({
           role: m.role === "model" ? ("assistant" as const) : ("user" as const),
           content: m.parts.map((p) => p.text).join(""),
         })),
       ]);
-      res.setHeader("Content-Type", "text/plain; charset=utf-8");
-      return res.end(text);
+      for await (const text of stream) {
+        // Set on the first piece only, so a Grok failure before any text can still send a JSON error.
+        if (!res.headersSent) res.setHeader("Content-Type", "text/plain; charset=utf-8");
+        res.write(text);
+      }
+      return res.end();
     } catch (fallbackError) {
       logger.error("Grok fallback failed:", fallbackError);
+      // Failed mid-stream: part of the reply is already sent, so just close it.
+      if (res.headersSent) return res.end();
     }
 
     if (error.status === 429 || error.message?.includes("429")) {
