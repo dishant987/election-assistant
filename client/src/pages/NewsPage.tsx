@@ -18,7 +18,9 @@ import { ThemeToggle } from "../components/ThemeToggle";
 import { MobileNavbar } from "../components/MobileNavbar";
 import { COUNTRIES, type NewsItem } from "../types";
 
-const COOLDOWN_SECONDS = 120;
+// The server caches news per country for 10 minutes and rate-limits /api/news to 5/min,
+// so a short client-side anti-spam pause is enough.
+const COOLDOWN_SECONDS = 10;
 
 const NewsSkeleton = () => (
   <div className="bg-card/40 backdrop-blur-xl border border-border/50 rounded-[32px] overflow-hidden animate-pulse">
@@ -43,16 +45,19 @@ const NewsCard = ({ item }: { item: NewsItem }) => (
     className="group bg-card/40 backdrop-blur-xl border border-border/50 rounded-[32px] overflow-hidden hover:border-primary/50 transition-all flex flex-col h-full shadow-xl"
   >
     <div className="relative aspect-video overflow-hidden">
-      {item.image ? (
+      <div className="w-full h-full bg-gradient-to-br from-primary/20 to-blue-500/20 flex items-center justify-center">
+        <Newspaper size={48} className="text-primary/40" />
+      </div>
+      {item.image && (
+        // Sits over the placeholder; if the publisher blocks hotlinking, hide it so the placeholder shows.
         <img
           src={item.image}
           alt={item.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={(e) => (e.currentTarget.style.display = "none")}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-      ) : (
-        <div className="w-full h-full bg-gradient-to-br from-primary/20 to-blue-500/20 flex items-center justify-center">
-          <Newspaper size={48} className="text-primary/40" />
-        </div>
       )}
       <div className="absolute top-4 left-4">
         <span className="px-3 py-1 bg-background/80 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-primary">
@@ -73,7 +78,8 @@ const NewsCard = ({ item }: { item: NewsItem }) => (
         {item.snippet}
       </p>
       <a
-        href={item.link}
+        // Links come from external feeds or AI output: only allow http(s), never javascript: URLs.
+        href={/^https?:\/\//i.test(item.link) ? item.link : undefined}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:gap-3 transition-all"

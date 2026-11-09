@@ -81,11 +81,10 @@ You need to run both the server and the client simultaneously.
 
 ## ☁️ Deployment
 
-The application is containerized and optimized for **Google Cloud Run**.
+Deployed on **Vercel** as two projects from this repo:
 
-- **CI/CD**: Deployment scripts are provided for seamless GCP updates.
-- **Containerization**: Includes optimized Dockerfiles for both Client and Server.
-- **Environment**: Managed using Cloud Secret Manager for sensitive keys.
+- **Server**: Root Directory `server`. Env vars: `GEMINI_API_KEY`, `GROK_API_KEY` (Groq `gsk_…` or xAI key; used when Gemini fails), `GNEWS_API_KEY` (optional, gnews.io; adds news images), `ALLOWED_ORIGINS` (the client URL).
+- **Client**: Root Directory `client`. Env var: `VITE_API_URL` (the server URL, no trailing slash).
 
 ## 📁 Project Structure
 

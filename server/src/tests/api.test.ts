@@ -36,6 +36,15 @@ describe("Election API Endpoints", () => {
       expect(res.body.error.code).toBe("VALIDATION_ERROR");
     });
 
+    it("should return 400 for a country outside the supported list", async () => {
+      const res = await request(app)
+        .get("/api/news")
+        .query({ country: "atlantis" });
+
+      expect(res.status).toBe(400);
+      expect(res.body.error.code).toBe("VALIDATION_ERROR");
+    });
+
     it("should return 400 if country is missing", async () => {
       const res = await request(app)
         .get("/api/news");

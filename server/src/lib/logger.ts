@@ -1,7 +1,4 @@
 import winston from "winston";
-import { LoggingWinston } from "@google-cloud/logging-winston";
-
-const loggingWinston = new LoggingWinston();
 
 export const logger = winston.createLogger({
   level: "info",
@@ -12,7 +9,5 @@ export const logger = winston.createLogger({
         winston.format.simple()
       ),
     }),
-    // Add Cloud Logging in production
-    ...(process.env.NODE_ENV === "production" ? [loggingWinston] : []),
   ],
 });

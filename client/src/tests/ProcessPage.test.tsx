@@ -25,7 +25,8 @@ describe('ProcessPage', () => {
     fireEvent.click(indiaButton!)
     
     expect(await screen.findByText(/India Election Cycle/i)).toBeInTheDocument()
-    expect(screen.getByText(/Electoral Roll Preparation/i)).toBeInTheDocument()
+    // Step titles show in both the step list and the detail panel
+    expect(screen.getAllByText(/Electoral Roll Preparation/i).length).toBeGreaterThan(0)
   })
 
   it('can navigate between steps in the process', async () => {
@@ -37,13 +38,13 @@ describe('ProcessPage', () => {
     expect(await screen.findByText(/USA Election Cycle/i)).toBeInTheDocument()
     
     // Check initial step
-    expect(screen.getByText(/Primaries and Caucuses/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/Primaries and Caucuses/i).length).toBeGreaterThan(0)
     
     // Click Next
     const nextButton = screen.getByText(/Next Step/i)
     fireEvent.click(nextButton)
     
-    expect(await screen.findByText(/National Conventions/i)).toBeInTheDocument()
+    expect((await screen.findAllByText(/National Conventions/i)).length).toBeGreaterThan(0)
   })
 
   it('can go back to country selection', async () => {

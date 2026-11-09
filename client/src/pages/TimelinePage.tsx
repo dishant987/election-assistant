@@ -96,13 +96,12 @@ export const TimelinePage = () => {
                 <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">Democratic Journey</h1>
                 <p className="text-xl text-muted-foreground">Select a country to explore its historical electoral milestones.</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8" role="list">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {countries.map((country) => (
                   <button
                     key={country.name}
                     onClick={() => setSelectedCountry(country.name)}
                     aria-label={`Explore timeline for ${country.name}`}
-                    role="listitem"
                     className="group relative p-12 bg-card/40 backdrop-blur-xl border border-border/50 rounded-[40px] overflow-hidden hover:border-primary/50 transition-all text-center flex flex-col items-center"
                   >
                     <div className={`absolute inset-0 bg-gradient-to-br ${country.color} opacity-0 group-hover:opacity-10 transition-opacity`} aria-hidden="true" />
