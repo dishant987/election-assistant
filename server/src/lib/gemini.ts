@@ -4,8 +4,8 @@ import { logger } from "./logger";
 // gemini-flash-latest / 3.8-flash hung with no reply (Nov 2026); 3.5-flash answers in ~5s.
 export const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
-// How long to wait for Gemini to start answering before failing over to Grok.
-export const GEMINI_TIMEOUT_MS = 20_000;
+// How long to wait for Gemini to start answering before failing over to Grok (which starts in ~0.5s).
+export const GEMINI_TIMEOUT_MS = 10_000;
 
 /** Rejects if `promise` does not settle within `ms`, so a hung request can fail over. */
 export const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
@@ -37,6 +37,9 @@ export const getGeminiModel = async (systemInstruction: string) => {
     return ai.getGenerativeModel({
       model: GEMINI_MODEL,
       systemInstruction,
+      // Short election answers don't need deep reasoning; default thinking took ~22s to the
+      // first word under load vs ~4s at "low". Cast: this SDK version doesn't type thinkingConfig.
+      generationConfig: { thinkingConfig: { thinkingLevel: "low" } } as any,
     });
   } catch (error) {
     logger.error("Failed to get Gemini model:", error);
