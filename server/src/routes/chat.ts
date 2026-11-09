@@ -3,7 +3,9 @@ import { z } from "zod";
 import { validate } from "../middleware/validate";
 import { rateLimit } from "../middleware/rateLimit";
 import { COUNTRY_PROMPTS } from "../lib/countryPrompts";
-import { getGeminiModel } from "../lib/gemini";
+import { getGeminiModel, withTimeout, GEMINI_TIMEOUT_MS } from "../lib/gemini";
+import { grokComplete } from "../lib/grok";
+import { logger } from "../lib/logger";
 
 const router = Router();
 
@@ -33,7 +35,10 @@ router.post("/", chatRateLimit, validate(chatSchema, "body"), async (req, res) =
   CRITICAL: Even if the previous messages in this conversation are in a different language, you must switch NOW and respond ONLY in ${language}. 
   Do not explain the language change, just start responding in ${language}.`;
 
-  const systemPrompt = COUNTRY_PROMPTS[country] + languageInstruction;
+  // The chat UI renders basic markdown only: tables and HTML tags show up as raw text.
+  const formatInstruction = `\n\nFORMATTING: Use only short paragraphs, **bold**, and bullet or numbered lists. Never use tables, headings deeper than ###, or HTML tags such as <br>.`;
+
+  const systemPrompt = COUNTRY_PROMPTS[country] + languageInstruction + formatInstruction;
 
   try {
     const model = await getGeminiModel(systemPrompt);
@@ -53,7 +58,8 @@ router.post("/", chatRateLimit, validate(chatSchema, "body"), async (req, res) =
       })),
     });
 
-    const result = await chat.sendMessageStream(lastMessage);
+    // Time out only the wait for the first response; a long stream after that is fine.
+    const result = await withTimeout(chat.sendMessageStream(lastMessage), GEMINI_TIMEOUT_MS);
 
     // Set headers for streaming
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
@@ -67,14 +73,28 @@ router.post("/", chatRateLimit, validate(chatSchema, "body"), async (req, res) =
     res.end();
   } catch (error: any) {
     console.error("Chat Error:", error);
-    if (!res.headersSent) {
-      if (error.status === 429 || error.message?.includes("429")) {
-        res.status(429).json({ error: "Too many requests. Please wait a moment before chatting again." });
-      } else {
-        res.status(500).json({ error: "Sorry, something went wrong. Please try again later." });
-      }
+    // Mid-stream failure: the reply is half-sent, so just close it.
+    if (res.headersSent) return res.end();
+
+    try {
+      logger.warn("Gemini chat failed, falling back to Grok");
+      const text = await grokComplete([
+        { role: "system", content: systemPrompt },
+        ...messages.map((m: { role: string; parts: { text: string }[] }) => ({
+          role: m.role === "model" ? ("assistant" as const) : ("user" as const),
+          content: m.parts.map((p) => p.text).join(""),
+        })),
+      ]);
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      return res.end(text);
+    } catch (fallbackError) {
+      logger.error("Grok fallback failed:", fallbackError);
+    }
+
+    if (error.status === 429 || error.message?.includes("429")) {
+      res.status(429).json({ error: "Too many requests. Please wait a moment before chatting again." });
     } else {
-      res.end();
+      res.status(500).json({ error: "Sorry, something went wrong. Please try again later." });
     }
   }
 });

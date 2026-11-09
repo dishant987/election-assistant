@@ -1,5 +1,6 @@
 import type { Message } from "../types";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { User, Bot, Copy, Check, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -17,7 +18,8 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   useEffect(() => {
     return () => {
-      window.speechSynthesis.cancel();
+      // Not every browser has speech synthesis; unmounting must not crash there.
+      window.speechSynthesis?.cancel();
     };
   }, []);
 
@@ -32,7 +34,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const handleReadAloud = () => {
     const text = message.parts[0].text;
-    if (!text) return;
+    if (!text || !window.speechSynthesis) return;
 
     if (isPlaying) {
       window.speechSynthesis.cancel();
@@ -89,7 +91,15 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             <div className="text-sm leading-relaxed">
               {message.parts[0].text ? (
                 <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
                   components={{
+                    table: ({ children }) => (
+                      <div className="overflow-x-auto mb-3">
+                        <table className="w-full text-left border-collapse">{children}</table>
+                      </div>
+                    ),
+                    th: ({ children }) => <th className="border border-border px-2 py-1 font-semibold bg-secondary/60">{children}</th>,
+                    td: ({ children }) => <td className="border border-border px-2 py-1 align-top">{children}</td>,
                     p: ({ children }) => <p className="mb-3 last:mb-0">{children}</p>,
                     ul: ({ children }) => <ul className="list-disc ml-5 mb-3 space-y-1">{children}</ul>,
                     ol: ({ children }) => <ol className="list-decimal ml-5 mb-3 space-y-1">{children}</ol>,
@@ -98,7 +108,8 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
                     a: ({ children, href }) => <a href={href} className="text-primary underline hover:no-underline" target="_blank" rel="noopener noreferrer">{children}</a>,
                   }}
                 >
-                  {message.parts[0].text}
+                  {/* Raw HTML isn't rendered (safety), so turn stray <br> tags from the AI into spaces */}
+                  {message.parts[0].text.replace(/<br\s*\/?>/gi, " ")}
                 </ReactMarkdown>
               ) : (
                 <div className="flex gap-1 py-1">

@@ -18,7 +18,9 @@ import { ThemeToggle } from "../components/ThemeToggle";
 import { MobileNavbar } from "../components/MobileNavbar";
 import { COUNTRIES, type NewsItem } from "../types";
 
-const COOLDOWN_SECONDS = 120;
+// News now comes from free Google News RSS, so a short anti-spam pause is enough;
+// the server still rate-limits /api/news to 5 requests per minute.
+const COOLDOWN_SECONDS = 10;
 
 const NewsSkeleton = () => (
   <div className="bg-card/40 backdrop-blur-xl border border-border/50 rounded-[32px] overflow-hidden animate-pulse">
@@ -43,16 +45,19 @@ const NewsCard = ({ item }: { item: NewsItem }) => (
     className="group bg-card/40 backdrop-blur-xl border border-border/50 rounded-[32px] overflow-hidden hover:border-primary/50 transition-all flex flex-col h-full shadow-xl"
   >
     <div className="relative aspect-video overflow-hidden">
-      {item.image ? (
+      <div className="w-full h-full bg-gradient-to-br from-primary/20 to-blue-500/20 flex items-center justify-center">
+        <Newspaper size={48} className="text-primary/40" />
+      </div>
+      {item.image && (
+        // Sits over the placeholder; if the publisher blocks hotlinking, hide it so the placeholder shows.
         <img
           src={item.image}
           alt={item.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={(e) => (e.currentTarget.style.display = "none")}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-      ) : (
-        <div className="w-full h-full bg-gradient-to-br from-primary/20 to-blue-500/20 flex items-center justify-center">
-          <Newspaper size={48} className="text-primary/40" />
-        </div>
       )}
       <div className="absolute top-4 left-4">
         <span className="px-3 py-1 bg-background/80 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-primary">

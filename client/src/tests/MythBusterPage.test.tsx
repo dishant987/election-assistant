@@ -11,7 +11,8 @@ describe('MythBusterPage', () => {
   it('renders myths initially', () => {
     renderWithRouter(<MythBusterPage />)
     
-    expect(screen.getByText(/Election Myth Buster/i)).toBeInTheDocument()
+    // Heading text is split across a <span>, so match the heading's accessible name
+    expect(screen.getByRole('heading', { name: /Election Myth Buster/i })).toBeInTheDocument()
     expect(screen.getByText(/EVMs can be hacked/i)).toBeInTheDocument()
   })
 

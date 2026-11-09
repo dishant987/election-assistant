@@ -1,10 +1,21 @@
 import request from "supertest";
 import { app } from "../index";
 import * as geminiLib from "../lib/gemini";
+import * as grokLib from "../lib/grok";
 
 // Mock the Gemini library
 jest.mock("../lib/gemini", () => ({
+  ...jest.requireActual("../lib/gemini"),
   getGeminiModel: jest.fn(),
+}));
+
+jest.mock("../lib/grok", () => ({
+  grokComplete: jest.fn().mockRejectedValue(new Error("Grok Error")),
+}));
+
+// Force the AI fallback path for news so the test never hits the network.
+jest.mock("../lib/newsFeed", () => ({
+  fetchElectionNews: jest.fn().mockResolvedValue([]),
 }));
 
 describe("Integration Tests", () => {
@@ -37,7 +48,23 @@ describe("Integration Tests", () => {
       expect(res.text).toBe("Hello there!");
     });
 
-    it("should handle Gemini errors gracefully", async () => {
+    it("should fall back to Grok when Gemini fails", async () => {
+      (geminiLib.getGeminiModel as any).mockRejectedValue(new Error("Gemini Error"));
+      (grokLib.grokComplete as any).mockResolvedValueOnce("Hi from Grok");
+
+      const res = await request(app)
+        .post("/api/chat")
+        .send({
+          country: "india",
+          messages: [{ role: "model", parts: [{ text: "Welcome" }] }, { role: "user", parts: [{ text: "Hi" }] }],
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.text).toBe("Hi from Grok");
+      expect((grokLib.grokComplete as any).mock.calls[0][0].map((m: any) => m.role)).toEqual(["system", "assistant", "user"]);
+    });
+
+    it("should return 500 when Gemini and Grok both fail", async () => {
       (geminiLib.getGeminiModel as any).mockRejectedValue(new Error("Gemini Error"));
 
       const res = await request(app)
@@ -48,7 +75,7 @@ describe("Integration Tests", () => {
         });
 
       expect(res.status).toBe(500);
-      expect(res.body.error.message).toBe("Sorry, something went wrong. Please try again later.");
+      expect(res.body.error).toBe("Sorry, something went wrong. Please try again later.");
     });
   });
 
@@ -69,9 +96,7 @@ describe("Integration Tests", () => {
         generateContent: mockGenerateContent
       });
 
-      // Need to mock getSecret too
-      const secretsLib = require("../lib/secrets");
-      jest.spyOn(secretsLib, "getSecret").mockResolvedValue("fake-key");
+      process.env.GEMINI_API_KEY = "fake-key";
 
       const res = await request(app)
         .get("/api/news")

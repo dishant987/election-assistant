@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Vote, 
@@ -50,6 +50,13 @@ export const SimulatorPage = () => {
       setCurrentStep(currentStep + 1);
     }
   };
+
+  // VVPAT step promises "slip will drop in 7 seconds"; without this the simulator dead-ends here.
+  useEffect(() => {
+    if (currentStep !== 3) return;
+    const timer = setTimeout(() => setCurrentStep(4), 7000);
+    return () => clearTimeout(timer);
+  }, [currentStep]);
 
   const handleVote = (partyName: string) => {
     setVoted(partyName);
@@ -221,6 +228,7 @@ export const SimulatorPage = () => {
                           <button 
                             disabled={!!voted}
                             onClick={() => handleVote(party.name)}
+                            aria-label={`Vote for ${party.name}`}
                             className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
                               voted === party.name 
                                 ? "bg-red-500 shadow-lg shadow-red-500/50" 
@@ -251,7 +259,7 @@ export const SimulatorPage = () => {
                           </div>
                           <div className="text-sm font-bold text-center">
                             VOTED FOR:<br/>
-                            <span className="text-lg text-primary">{voted}</span>
+                            <span className="text-lg text-indigo-700">{voted}</span>
                           </div>
                           <div className="mt-8 text-[10px] text-slate-400 text-center font-mono uppercase">
                             SLIP #29384-ECI<br/>
@@ -328,6 +336,7 @@ export const SimulatorPage = () => {
                   <button 
                     disabled={currentStep === 0}
                     onClick={() => setCurrentStep(prev => prev - 1)}
+                    aria-label="Previous step"
                     className="p-4 rounded-2xl border border-border/50 hover:bg-secondary transition-all disabled:opacity-0"
                   >
                     <ChevronLeft size={24} />

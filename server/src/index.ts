@@ -14,6 +14,9 @@ dotenv.config();
 export const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Behind Vercel's proxy: needed so rate limiting sees the real client IP
+app.set("trust proxy", 1);
+
 // Security: Use Helmet for secure headers
 app.use(helmet());
 
@@ -61,6 +64,11 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   });
 });
 
-app.listen(PORT, () => {
-  logger.info(`Server is running on http://localhost:${PORT}`);
-});
+// Vercel runs the exported app as a serverless function; listen only when self-hosted.
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    logger.info(`Server is running on http://localhost:${PORT}`);
+  });
+}
+
+export default app;

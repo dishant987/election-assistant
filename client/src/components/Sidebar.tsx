@@ -83,10 +83,8 @@ export const Sidebar = ({ isMobile, onClose }: { isMobile?: boolean, onClose?: (
 
           <div className="pt-6 border-t border-border space-y-2">
             <button
-              onClick={() => {
-                setIsSettingsOpen(true);
-                onClose?.();
-              }}
+              // Don't close the mobile menu here: that unmounts this Sidebar and the modal with it.
+              onClick={() => setIsSettingsOpen(true)}
               className="w-full flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-secondary/50 rounded-xl text-sm font-bold transition-all"
             >
               <Settings size={18} />
@@ -125,7 +123,10 @@ export const Sidebar = ({ isMobile, onClose }: { isMobile?: boolean, onClose?: (
 
       <SettingsModal
         isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
+        onClose={() => {
+          setIsSettingsOpen(false);
+          onClose?.(); // on mobile, also close the menu so the user lands back in the chat
+        }}
       />
     </>
   );

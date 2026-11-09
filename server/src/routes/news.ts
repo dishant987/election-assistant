@@ -1,8 +1,10 @@
 import express from "express";
 import { z } from "zod";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { getSecret } from "../lib/secrets";
 import { logger } from "../lib/logger";
+import { GEMINI_MODEL, GEMINI_TIMEOUT_MS } from "../lib/gemini";
+import { grokComplete } from "../lib/grok";
+import { fetchElectionNews } from "../lib/newsFeed";
 import { validate } from "../middleware/validate";
 import { rateLimit } from "../middleware/rateLimit";
 
@@ -18,30 +20,39 @@ const newsQuerySchema = z.object({
   country: z.string().min(2).max(50),
 });
 
+/** Asks Gemini for JSON; on any Gemini failure, asks Grok instead. */
+const generateNewsJson = async (prompt: string): Promise<string> => {
+  try {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) throw new Error("GEMINI_API_KEY is not defined");
+    const model = new GoogleGenerativeAI(apiKey).getGenerativeModel(
+      { model: GEMINI_MODEL, generationConfig: { responseMimeType: "application/json" } },
+      { timeout: GEMINI_TIMEOUT_MS } // not streamed, so the SDK's whole-request timeout is safe here
+    );
+    const text = (await model.generateContent(prompt)).response.text();
+    if (!text) throw new Error("Empty response from Gemini AI");
+    return text;
+  } catch (error) {
+    logger.warn("Gemini news failed, falling back to Grok:", error);
+    return grokComplete([{ role: "user", content: prompt }], true);
+  }
+};
+
 /**
  * GET /api/news
- * Fetches latest election news using Gemini AI
+ * Real news from Google News RSS; falls back to Gemini, then Grok
  */
 router.get("/", newsRateLimit, validate(newsQuerySchema, "query"), async (req, res, next) => {
   const country = req.query.country as string;
 
   try {
-    const apiKey = await getSecret("GEMINI_API_KEY");
-
-    if (!apiKey) {
-      logger.error("GEMINI_API_KEY is not defined");
-      return res.status(500).json({
-        error: { message: "Gemini API not configured", code: "CONFIG_ERROR" },
-      });
+    // Real headlines first; AI-generated news is only a fallback.
+    try {
+      const news = await fetchElectionNews(country);
+      if (news.length) return res.json({ news, timestamp: new Date().toISOString() });
+    } catch (error) {
+      logger.warn("Google News RSS failed, falling back to AI:", error);
     }
-
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash", // Using stable version
-      generationConfig: {
-        responseMimeType: "application/json",
-      },
-    });
 
     const prompt = `
 Give exactly 10 latest election-related news articles for ${country}.
@@ -61,12 +72,7 @@ Return strictly in JSON format:
 Rules: No markdown, only valid JSON, focused on current election events.
 `;
 
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
-
-    if (!responseText) {
-      throw new Error("Empty response from Gemini AI");
-    }
+    const responseText = await generateNewsJson(prompt);
 
     let data;
     try {

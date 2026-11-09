@@ -51,12 +51,13 @@ export const ChatWindow = () => {
       className="flex-1 h-full scrollbar-hide" 
       initialScrollBehavior="smooth" 
       followButtonClassName="hidden"
-      role="log"
-      aria-label="Chat history"
-      aria-live="polite"
     >
-      <div 
+      {/* ScrollToBottom doesn't forward ARIA props, so the live region lives on this div */}
+      <div
         className="p-4 md:p-8 flex flex-col min-h-full max-w-5xl mx-auto w-full"
+        role="log"
+        aria-label="Chat history"
+        aria-live="polite"
       >
         <AnimatePresence>
           {messages.map((msg, index) => (

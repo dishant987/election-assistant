@@ -41,6 +41,9 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 })
 
+// jsdom does not implement scrollIntoView
+Element.prototype.scrollIntoView = vi.fn()
+
 // Mock IntersectionObserver
 class MockIntersectionObserver {
   observe = vi.fn()
